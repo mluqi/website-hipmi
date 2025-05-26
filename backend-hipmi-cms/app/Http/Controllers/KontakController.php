@@ -23,17 +23,17 @@ class KontakController extends Controller
     public function update(Request $request, Kontak $kontak)
     {
         $request->validate([
-            'alamat' => 'required|string',
-            'telepon' => 'required|string',
-            'email' => 'required|string',
-            'maps' => 'required|string',
+            'kontak_alamat' => 'required|string',
+            'kontak_telepon' => 'required|string',
+            'kontak_email' => 'required|string',
+            'kontak_maps' => 'required|string',
         ]);
 
         $kontak->update([
-            'kontak_alamat' => $request->input('alamat'),
-            'kontak_telepon' => $request->input('telepon'),
-            'kontak_email' => $request->input('email'),
-            'kontak_maps' => $request->input('maps'),
+            'kontak_alamat' => $request->input('kontak_alamat'),
+            'kontak_telepon' => $request->input('kontak_telepon'),
+            'kontak_email' => $request->input('kontak_email'),
+            'kontak_maps' => $request->input('kontak_maps'),
         ]);
 
         return response()->json($kontak);

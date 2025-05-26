@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('kontak', function (Blueprint $table) {
             $table->id();
-            $table->string('alamat');
-            $table->string('telepon');
-            $table->string('email');
-            $table->string('maps');
+            $table->string('kontak_alamat');
+            $table->string('kontak_telepon');
+            $table->string('kontak_email');
+            $table->string('kontak_maps');
         });
     }
 
