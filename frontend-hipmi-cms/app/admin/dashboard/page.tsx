@@ -5,6 +5,7 @@ import {
   usePublic,
   LandingPageData,
   LandingPageComponentItem,
+  LandingPageComponentUpdatePayload,
 } from "@/contexts/PublicContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Image from "next/image";
@@ -59,6 +60,7 @@ const Dashboard = () => {
         if (item.type === "text") {
           initialValue = item.value || "";
         } else {
+          initialValue = item.value; 
           if (item.value) {
             initialPreview = `${urlBase}/storage/${item.value}`;
           }
@@ -132,9 +134,7 @@ const Dashboard = () => {
       }
 
       let fieldSpecificUpdateNeeded = false;
-      const payload: Partial<
-        Omit<LandingPageComponentItem, "id" | "created_at" | "updated_at">
-      > & { value?: string | File | null; type: "text" | "image" } = {
+      const payload: LandingPageComponentUpdatePayload = {
         type: component.type,
         section: component.section,
         key_name: component.key_name,

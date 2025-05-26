@@ -87,12 +87,27 @@ export interface LandingPageData {
 
 export interface KontakItem {
   id: number;
-  alamat: string;
-  telepon: string;
-  email: string;
-  maps: string | null;
+  kontak_alamat: string;
+  kontak_telepon: string;
+  kontak_email: string;
+  kontak_maps: string | null;
 }
 
+// Payload for updating KontakItem
+export interface KontakUpdatePayload {
+  kontak_alamat?: string;
+  kontak_telepon?: string;
+  kontak_email?: string;
+  kontak_maps?: string | null; // Allow explicitly setting to null or providing a new string
+}
+
+export interface LandingPageComponentUpdatePayload {
+  type: "text" | "image";
+  section?: string;
+  key_name?: string;
+  value?: string | File | null;
+  sort_order?: number | null;
+}
 interface PublicContextType {
   anggotaList: AnggotaItem[];
   beritaList: BeritaItem[];
@@ -119,13 +134,11 @@ interface PublicContextType {
   fetchKontak: () => Promise<void>;
   updateKontak: (
     id: number,
-    data: Partial<Omit<KontakItem, "id" | "created_at" | "updated_at">>
+    data: KontakUpdatePayload
   ) => Promise<KontakItem | null>;
   updateLandingPageComponent: (
     id: number,
-    data: Partial<
-      Omit<LandingPageComponentItem, "id" | "created_at" | "updated_at">
-    > & { value?: string | File | null; type: "text" | "image" }
+    data: LandingPageComponentUpdatePayload
   ) => Promise<LandingPageComponentItem | null>;
 }
 
@@ -345,8 +358,12 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       const response = await api.get("/public/kontak");
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        setKontakData(response.data[0]); // Assuming the first entry is the relevant one
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
+        setKontakData(response.data[0]);
       } else {
         setKontakData(null);
         console.warn("No contact data found or data format is unexpected.");
@@ -366,32 +383,31 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
   const updateKontak = useCallback(
     async (
       id: number,
-      data: Partial<Omit<KontakItem, "id" | "created_at" | "updated_at">>
+      data: KontakUpdatePayload
     ) => {
       setLoading(true);
       setError(null);
       try {
         const formData = new FormData();
-        // Append all fields from data to formData
         (Object.keys(data) as Array<keyof typeof data>).forEach((key) => {
           const value = data[key];
           if (value !== undefined && value !== null) {
             formData.append(key, String(value));
           } else if (value === null) {
-            formData.append(key, ""); // Send empty string for null, backend can interpret as null
+            formData.append(key, "");
           }
         });
         formData.append("_method", "PUT");
 
-        const response = await api.post(`/kontak/${id}`, formData); // Using POST with _method: 'PUT'
-        
-        // Refresh kontak data in context
-        await fetchKontak(); 
-        // Or, if the response contains the updated item:
-        // setKontakData(response.data as KontakItem);
+        const response = await api.post(`/kontak/${id}`, formData);
+
+        await fetchKontak();
         return response.data as KontakItem;
       } catch (err: any) {
-        console.error("Error updating kontak data:", err.response?.data || err.message);
+        console.error(
+          "Error updating kontak data:",
+          err.response?.data || err.message
+        );
         setError(
           err.response?.data?.message ||
             err.message ||
@@ -401,11 +417,13 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
       } finally {
         setLoading(false);
       }
-    }, [fetchKontak]);
+    },
+    [fetchKontak]
+  );
 
   const fetchLandingPageComponents = useCallback(async () => {
-    setLoading(true); // Or use specific landingPageLoading
-    setError(null); // Or use specific landingPageError
+    setLoading(true);
+    setError(null);
     try {
       const response = await api.get("/public/content");
       setLandingPageData(response.data);
@@ -422,18 +440,12 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateLandingPageComponent = useCallback(
-    async (
-      id: number,
-      data: Partial<
-        Omit<LandingPageComponentItem, "id" | "created_at" | "updated_at">
-      > & { value?: string | File | null; type: "text" | "image" }
-    ) => {
+    async (id: number, data: LandingPageComponentUpdatePayload) => {
       setLoading(true);
       setError(null);
       try {
         const formData = new FormData();
         formData.append("type", data.type);
-
         if (data.section !== undefined)
           formData.append("section", data.section);
         if (data.key_name !== undefined)
@@ -454,11 +466,10 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
               formData.append("value", "");
             }
           } else {
-            // type === "text"
             if (data.value === null) {
               formData.append("value", "");
-            } else {
-              formData.append("value", data.value as string);
+            } else if (typeof data.value === "string") {
+              formData.append("value", data.value);
             }
           }
         }

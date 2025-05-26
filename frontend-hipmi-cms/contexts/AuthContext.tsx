@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (newToken: string) => void;
   logout: () => void;
+  setUser: React.Dispatch<React.SetStateAction<any | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,54 +33,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedToken = localStorage.getItem("admin_token");
     if (storedToken) {
       setIsLoading(true);
-      // Verifikasi token ke backend
       api
         .get("/user")
         .then((response) => {
           setUser(response.data);
-          setToken(storedToken); // Pastikan token diatur setelah verifikasi
+          setToken(storedToken);
           setIsAuthenticated(true);
         })
         .catch((error) => {
           console.error("Token verification failed:", error);
-          // Hapus token yang tidak valid dari localStorage
           localStorage.removeItem("admin_token");
           setToken(null);
           setIsAuthenticated(false);
-          router.replace("/admin/login"); // Redirect ke halaman login
+          router.replace("/admin/login");
         })
         .finally(() => {
           setIsLoading(false);
         });
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, []); // Efek ini hanya berjalan sekali saat mount
+  }, [router]);
 
   const login = (newToken: string) => {
-    api.get("/user").then((res) => {
-      setUser(res.data);
-    });
     localStorage.setItem("admin_token", newToken);
     setToken(newToken);
     setIsAuthenticated(true);
+    api
+      .get("/user")
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch user:", error);
+      });
   };
 
   const logout = async () => {
     try {
-      // Hit endpoint logout di backend
-      await api.post('/logout');
+      await api.post("/logout");
+    } catch (error) {
+      console.error("Logout API call failed:", error);
+    } finally {
       localStorage.removeItem("admin_token");
       setToken(null);
       setIsAuthenticated(false);
       setUser(null);
-      // Redirect ke halaman login setelah logout
-      router.replace('/admin/login');
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Tangani error jika terjadi masalah saat logout di backend
-      // Misalnya, tampilkan pesan error ke pengguna
+      router.replace("/admin/login");
     }
-  }
+  };
 
   const contextValue: AuthContextType = {
     user,

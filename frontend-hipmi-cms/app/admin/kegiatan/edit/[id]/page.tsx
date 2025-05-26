@@ -52,8 +52,8 @@ const EditKegiatanPage = () => {
       setIsi(kegiatan.kegiatan_isi);
       setKategori(kegiatan.kegiatan_kategori);
       setLokasi(kegiatan.kegiatan_lokasi);
-      setTanggal(kegiatan.kegiatan_tanggal.split("T")[0]); // Format YYYY-MM-DD
-      setWaktu(kegiatan.kegiatan_waktu.substring(0, 5)); // Format HH:MM
+      setTanggal(kegiatan.kegiatan_tanggal.split("T")[0]);
+      setWaktu(kegiatan.kegiatan_waktu.substring(0, 5));
       setCurrentFotoUrl(
         kegiatan.kegiatan_foto
           ? `${urlBase}/storage/${kegiatan.kegiatan_foto}`
@@ -72,7 +72,7 @@ const EditKegiatanPage = () => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setNewFoto(e.target.files[0]);
-      setCurrentFotoUrl(URL.createObjectURL(e.target.files[0])); // Preview new image
+      setCurrentFotoUrl(URL.createObjectURL(e.target.files[0]));
     } else {
       setNewFoto(null);
     }

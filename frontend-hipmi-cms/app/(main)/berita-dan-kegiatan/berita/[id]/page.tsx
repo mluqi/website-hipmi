@@ -28,10 +28,13 @@ const BeritaDetailPage = () => {
         setPageLoading(true);
         setPageError(null);
         fetchBeritaById(articleId)
-          .then(setArticle)
+          .then((data) => {
+            setArticle(data);
+          })
           .catch((err) => {
             console.error("Failed to fetch article:", err);
             setPageError("Gagal memuat detail berita.");
+            setArticle(null);
           })
           .finally(() => setPageLoading(false));
       } else {
@@ -41,7 +44,8 @@ const BeritaDetailPage = () => {
     }
   }, [id, fetchBeritaById]);
 
-  if (pageLoading || (loading && !article && !pageError)) {
+  // 1. Handle Page Loading state
+  if (pageLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen py-40">
         <LoadingSpinner />
@@ -53,9 +57,24 @@ const BeritaDetailPage = () => {
     return (
       <div className="container mx-auto px-4 py-40 text-center">
         <h1 className="text-2xl font-semibold text-red-500">
-          Berita tidak ditemukan
+          Terjadi Kesalahan
         </h1>
-        <p className="text-gray-600 mt-2">{pageError || contextError}</p>
+        <p className="text-gray-600 mt-2">
+          {pageError || contextError || "Tidak dapat memuat berita."}
+        </p>
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div className="container mx-auto px-4 py-40 text-center">
+        <h1 className="text-2xl font-semibold text-gray-700">
+          Berita Tidak Ditemukan
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Berita yang Anda cari tidak tersedia atau telah dihapus.
+        </p>
       </div>
     );
   }

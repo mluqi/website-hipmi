@@ -83,7 +83,7 @@ const Kontak = () => {
                   <p className="text-gray-600 text-sm">Memuat alamat...</p>
                 )}
                 {kontakData && (
-                  <p className="text-gray-600 text-sm">{kontakData.alamat}</p>
+                  <p className="text-gray-600 text-sm">{kontakData.kontak_alamat}</p>
                 )}
                 {!contextLoading && !kontakData && (
                   <p className="text-gray-600 text-sm">
@@ -103,8 +103,8 @@ const Kontak = () => {
                 )}
                 {kontakData && (
                   <p className="text-gray-600 text-sm hover:text-accent transition-colors">
-                    <a href={`tel:${kontakData.telepon}`}>
-                      {kontakData.telepon}
+                    <a href={`tel:${kontakData.kontak_telepon}`}>
+                      {kontakData.kontak_telepon}
                     </a>
                   </p>
                 )}
@@ -125,8 +125,8 @@ const Kontak = () => {
                 )}
                 {kontakData && (
                   <p className="text-gray-600 text-sm hover:text-accent transition-colors">
-                    <a href={`mailto:${kontakData.email}`}>
-                      {kontakData.email}
+                    <a href={`mailto:${kontakData.kontak_email}`}>
+                      {kontakData.kontak_email}
                     </a>
                   </p>
                 )}
@@ -147,9 +147,9 @@ const Kontak = () => {
                   <p>Memuat peta...</p>
                 </div>
               )}
-              {kontakData && kontakData.maps && (
+              {kontakData && kontakData.kontak_maps && (
                 <iframe
-                  src={kontakData.maps}
+                  src={kontakData.kontak_maps}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -159,7 +159,7 @@ const Kontak = () => {
                   title="Lokasi HIPMI Kota Cirebon"
                 ></iframe>
               )}
-              {(!kontakData || !kontakData.maps) && !contextLoading && (
+              {(!kontakData || !kontakData.kontak_maps) && !contextLoading && (
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.3660000000003!2d108.55880000000001!3d-6.720000000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6f1d8ebc1e231d%3A0x3c8a6b75f9b0b075!2sAlun-Alun%20Kejaksan%20Cirebon!5e0!3m2!1sid!2sid!4v1678886400000!5m2!1sid!2sid"
                   width="100%"

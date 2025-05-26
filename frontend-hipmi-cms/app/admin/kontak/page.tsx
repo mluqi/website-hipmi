@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { usePublic } from "@/contexts/PublicContext";
+import { usePublic, KontakUpdatePayload } from "@/contexts/PublicContext";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-// import { Label } from "@/components/ui/label"; // Assuming you have this component
 
-// Fallback Label component if not available from ui
 const Label = ({ htmlFor, children, className }: { htmlFor: string, children: React.ReactNode, className?: string }) => (
   <label htmlFor={htmlFor} className={`block text-sm font-medium text-gray-700 mb-1 ${className}`}>
     {children}
@@ -17,10 +15,10 @@ const Label = ({ htmlFor, children, className }: { htmlFor: string, children: Re
 const KontakEditPage = () => {
   const { kontakData, fetchKontak, updateKontak, loading, error } = usePublic();
   const [formData, setFormData] = useState({
-    alamat: "",
-    telepon: "",
-    email: "",
-    maps: "",
+    kontak_alamat: "",
+    kontak_telepon: "",
+    kontak_email: "",
+    kontak_maps: "",
   });
   const [kontakId, setKontakId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,10 +32,10 @@ const KontakEditPage = () => {
   useEffect(() => {
     if (kontakData) {
       setFormData({
-        alamat: kontakData.alamat || "",
-        telepon: kontakData.telepon || "",
-        email: kontakData.email || "",
-        maps: kontakData.maps || "",
+        kontak_alamat: kontakData.kontak_alamat || "",
+        kontak_telepon: kontakData.kontak_telepon || "",
+        kontak_email: kontakData.kontak_email || "",
+        kontak_maps: kontakData.kontak_maps || "",
       });
       setKontakId(kontakData.id);
     }
@@ -59,12 +57,12 @@ const KontakEditPage = () => {
       setSubmitError("ID Kontak tidak ditemukan. Tidak dapat menyimpan.");
       return;
     }
-    if (!formData.alamat || !formData.telepon || !formData.email) {
+    if (!formData.kontak_alamat || !formData.kontak_telepon || !formData.kontak_email) {
       setSubmitError("Alamat, Telepon, dan Email tidak boleh kosong.");
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); // Cast formData to KontakUpdatePayload
     const result = await updateKontak(kontakId, formData);
     setIsSubmitting(false);
 
@@ -94,7 +92,7 @@ const KontakEditPage = () => {
 
   if (!kontakData && !loading) {
     return (
-      <div className="container mx-auto p-8">
+      <div className="container mx-auto p-8 text-textcolor">
         Data kontak tidak ditemukan. Mungkin perlu dibuat terlebih dahulu
         melalui sistem atau backend.
       </div>
@@ -122,13 +120,13 @@ const KontakEditPage = () => {
         className="space-y-6 bg-white p-6 rounded-lg shadow-md"
       >
         <div>
-          <Label htmlFor="alamat" className="text-textcolor">
+          <Label htmlFor="kontak_alamat" className="text-textcolor">
             Alamat
           </Label>
           <Textarea
-            id="alamat"
-            name="alamat"
-            value={formData.alamat}
+            id="kontak_alamat"
+            name="kontak_alamat"
+            value={formData.kontak_alamat}
             onChange={handleChange}
             required
             className="mt-1 w-full text-textcolor"
@@ -136,41 +134,41 @@ const KontakEditPage = () => {
           />
         </div>
         <div>
-          <Label htmlFor="telepon" className="text-textcolor">
+          <Label htmlFor="kontak_telepon" className="text-textcolor">
             Telepon
           </Label>
-          <Input
+          <Input // Changed name to match KontakUpdatePayload
             type="text"
-            id="telepon"
-            name="telepon"
-            value={formData.telepon}
+            id="kontak_telepon"
+            name="kontak_telepon"
+            value={formData.kontak_telepon}
             onChange={handleChange}
             required
             className="mt-1 w-full text-textcolor"
           />
         </div>
         <div>
-          <Label htmlFor="email" className="text-textcolor">
+          <Label htmlFor="kontak_email" className="text-textcolor">
             Email
           </Label>
-          <Input
+          <Input // Changed name to match KontakUpdatePayload
             type="email"
-            id="email"
-            name="email"
-            value={formData.email}
+            id="kontak_email"
+            name="kontak_email"
+            value={formData.kontak_email}
             onChange={handleChange}
             required
             className="mt-1 w-full text-textcolor"
           />
         </div>
         <div>
-          <Label htmlFor="maps" className="text-textcolor">
+          <Label htmlFor="kontak_maps" className="text-textcolor">
             URL Google Maps Embed
           </Label>
-          <Textarea
-            id="maps"
-            name="maps"
-            value={formData.maps}
+          <Textarea // Changed name to match KontakUpdatePayload
+            id="kontak_maps"
+            name="kontak_maps"
+            value={formData.kontak_maps}
             onChange={handleChange}
             className="mt-1 w-full text-textcolor"
             rows={4}
