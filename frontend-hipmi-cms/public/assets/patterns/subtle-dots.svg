@@ -1,0 +1,14 @@
+<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="0.5" fill="#cccccc"/>
+    <circle cx="15" cy="15" r="0.5" fill="#cccccc"/>
+    <!-- 
+        Anda bisa menyesuaikan:
+        - width/height: ukuran tile pattern
+        - cx/cy: posisi titik
+        - r: ukuran radius titik
+        - fill: warna titik. Saya menggunakan hitam (#000000) di sini, 
+                karena kita akan mengontrol visibilitasnya dengan opacity di Tailwind.
+                Anda juga bisa menggunakan warna abu-abu muda seperti #cccccc atau #e0e0e0
+                jika ingin warna titiknya sendiri sudah samar.
+    -->
+</svg>
