@@ -1,0 +1,12 @@
+# Node.js
+/frontend-hipmi-cms/node_modules
+
+# Laravel
+/backend-hipmi-cms/vendor
+/backend-hipmi-cms/.env
+
+# OS
+.DS_Store
+
+# Others
+*.log
