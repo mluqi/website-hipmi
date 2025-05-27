@@ -9,14 +9,14 @@ import React, {
   useCallback,
 } from "react";
 import api from "@/services/api";
-import { useAuth } from "./AuthContext"; // Assuming authentication is needed for Kegiatan management
+import { useAuth } from "./AuthContext"; 
 
 export interface KegiatanItem {
   id: number;
   kegiatan_judul: string;
   kegiatan_isi: string;
   kegiatan_foto: string | null;
-  kegiatan_kategori: string; // Corrected based on common sense and BeritaContext pattern
+  kegiatan_kategori: string; 
   kegiatan_tanggal: string;
   kegiatan_waktu: string;
   kegiatan_lokasi: string;
@@ -32,11 +32,31 @@ export interface KegiatanPayload {
   lokasi: string;
 }
 
+// Interface untuk struktur data paginasi dari Laravel
+export interface PaginatedKegiatanResponse {
+  current_page: number;
+  data: KegiatanItem[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
 interface KegiatanContextType {
   kegiatanList: KegiatanItem[];
   isLoading: boolean;
   error: string | null;
-  fetchKegiatanList: () => Promise<void>;
+  fetchKegiatanList: (
+    searchQuery?: string,
+    page?: number,
+    perPage?: number
+  ) => Promise<void>;
   getKegiatanById: (id: number) => Promise<KegiatanItem | null>;
   createKegiatan: (payload: KegiatanPayload) => Promise<KegiatanItem | null>;
   updateKegiatan: (
@@ -45,6 +65,10 @@ interface KegiatanContextType {
   ) => Promise<KegiatanItem | null>;
   deleteKegiatan: (id: number) => Promise<boolean>;
   clearError: () => void;
+  currentPage: number;
+  totalPages: number;
+  totalKegiatan: number;
+  kegiatanPerPage: number;
 }
 
 const KegiatanContext = createContext<KegiatanContextType | undefined>(
@@ -56,25 +80,49 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth(); // Use token if API requires authentication
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalKegiatan, setTotalKegiatan] = useState(0);
+  const [kegiatanPerPage, setKegiatanPerPage] = useState(10); // Default items per page
 
   const clearError = () => setError(null);
 
-  const fetchKegiatanList = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await api.get<KegiatanItem[]>("/kegiatan"); // Endpoint: GET /api/kegiatan
-      setKegiatanList(response.data);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Gagal mengambil daftar kegiatan"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchKegiatanList = useCallback(
+    async (searchQuery?: string, page: number = 1, perPage: number = 10) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery && searchQuery.trim() !== "") {
+          params.append("search", searchQuery);
+        }
+        params.append("page", page.toString());
+        params.append("per_page", perPage.toString());
+
+        const response = await api.get<PaginatedKegiatanResponse>(
+          `/kegiatan?${params.toString()}`
+        );
+        setKegiatanList(response.data.data);
+        setCurrentPage(response.data.current_page);
+        setTotalPages(response.data.last_page);
+        setTotalKegiatan(response.data.total);
+        setKegiatanPerPage(response.data.per_page);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Gagal mengambil daftar kegiatan"
+        );
+        setKegiatanList([]);
+        setCurrentPage(1);
+        setTotalPages(0);
+        setTotalKegiatan(0);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  ); // Dependencies akan ditambahkan jika state seperti `kegiatanPerPage` di-manage di sini dan digunakan
 
   const getKegiatanById = async (id: number): Promise<KegiatanItem | null> => {
     setIsLoading(true);
@@ -103,9 +151,9 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
     formData.append("judul", payload.judul);
     formData.append("isi", payload.isi);
     formData.append("kategori", payload.kategori);
-    formData.append("tanggal", payload.tanggal); 
-    formData.append("waktu", payload.waktu);     
-    formData.append("lokasi", payload.lokasi); 
+    formData.append("tanggal", payload.tanggal);
+    formData.append("waktu", payload.waktu);
+    formData.append("lokasi", payload.lokasi);
 
     if (payload.foto) {
       formData.append("foto", payload.foto);
@@ -155,8 +203,8 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
     formData.append("kategori", payload.kategori);
 
     formData.append("tanggal", payload.tanggal);
-    formData.append("waktu", payload.waktu);    
-    formData.append("lokasi", payload.lokasi); 
+    formData.append("waktu", payload.waktu);
+    formData.append("lokasi", payload.lokasi);
 
     if (payload.foto) {
       formData.append("foto", payload.foto);
@@ -205,8 +253,8 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      await api.delete(`/kegiatan/${id}`); // Endpoint: DELETE /api/kegiatan/{id}
-      fetchKegiatanList(); // Refresh list
+      await api.delete(`/kegiatan/${id}`); 
+      fetchKegiatanList();
       return true;
     } catch (err: any) {
       setError(
@@ -230,6 +278,10 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
     updateKegiatan,
     deleteKegiatan,
     clearError,
+    currentPage,
+    totalPages,
+    totalKegiatan,
+    kegiatanPerPage,
   };
 
   return (

@@ -7,6 +7,7 @@ import { KegiatanProvider } from "@/contexts/KegiatanContext";
 import { AnggotaProvider } from "@/contexts/AnggotaContext";
 import { JabatanProvider } from "@/contexts/JabatanContext";
 import { BidangProvider } from "@/contexts/BidangContext";
+import { KategoriProvider } from "@/contexts/KategoriContext";
 import { PublicProvider } from "@/contexts/PublicContext";
 import { CustomProvider } from "@/contexts/CustomContext";
 
@@ -39,9 +40,11 @@ export default function RootLayout({
                 <AnggotaProvider>
                   <JabatanProvider>
                     <BidangProvider>
-                      <CustomProvider>
-                        <PublicProvider>{children}</PublicProvider>
-                      </CustomProvider>
+                      <KategoriProvider>
+                        <CustomProvider>
+                          <PublicProvider>{children}</PublicProvider>
+                        </CustomProvider>
+                      </KategoriProvider>
                     </BidangProvider>
                   </JabatanProvider>
                 </AnggotaProvider>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePublic } from "@/contexts/PublicContext";
@@ -16,6 +16,8 @@ import "swiper/css/pagination";
 const imageStorageBaseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:8000/storage/";
 
+const BERITA_ITEMS_PER_PAGE = 6;
+
 const BeritaKegiatan = () => {
   const {
     beritaList,
@@ -24,12 +26,43 @@ const BeritaKegiatan = () => {
     error,
     fetchBerita,
     fetchKegiatan,
+    beritaCurrentPage,
+    beritaTotalPages,
   } = usePublic();
 
+  const [searchInput, setSearchInput] = useState("");
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
+  const [localCurrentPage, setLocalCurrentPage] = useState(1);
+
   useEffect(() => {
-    fetchBerita();
     fetchKegiatan();
-  }, [fetchBerita, fetchKegiatan]);
+  }, [fetchKegiatan]);
+
+  useEffect(() => {
+    fetchBerita(submittedSearchQuery, localCurrentPage, BERITA_ITEMS_PER_PAGE);
+  }, [fetchBerita, localCurrentPage, submittedSearchQuery]);
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLocalCurrentPage(1); 
+    setSubmittedSearchQuery(searchInput);
+  };
+
+  const handleNextPage = () => {
+    if (beritaCurrentPage < beritaTotalPages) {
+      setLocalCurrentPage(beritaCurrentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (beritaCurrentPage > 1) {
+      setLocalCurrentPage(beritaCurrentPage - 1);
+    }
+  };
 
   if (loading) {
     return (
@@ -71,8 +104,27 @@ const BeritaKegiatan = () => {
       <section id="semua-berita" className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-semibold text-textcolor mb-8 md:mb-10 text-center md:text-left">
-            Semua Berita
+            Telusuri Berita
           </h2>
+
+          <form onSubmit={handleSearchSubmit} className="mb-8 max-w-xl mx-auto md:mx-0">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={searchInput}
+                onChange={handleSearchChange}
+                placeholder="Cari berita..."
+                className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none text-textcolor"
+              />
+              <button
+                type="submit"
+                className="bg-secondary hover:bg-secondary/90 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
+              >
+                Cari
+              </button>
+            </div>
+          </form>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {beritaList.map((article) => (
               <Link
@@ -124,6 +176,34 @@ const BeritaKegiatan = () => {
               </Link>
             ))}
           </div>
+
+          {beritaList.length === 0 && !loading && (
+            <p className="text-center text-gray-500 mt-8">
+              Tidak ada berita yang cocok dengan pencarian Anda.
+            </p>
+          )}
+
+          {beritaList.length > 0 && beritaTotalPages > 1 && (
+            <div className="mt-12 flex justify-center items-center space-x-4">
+              <button
+                onClick={handlePrevPage}
+                disabled={beritaCurrentPage <= 1}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Sebelumnya
+              </button>
+              <span className="text-gray-700">
+                Halaman {beritaCurrentPage} dari {beritaTotalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                disabled={beritaCurrentPage >= beritaTotalPages}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Berikutnya
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

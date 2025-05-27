@@ -47,11 +47,27 @@ export interface AnggotaPayload {
   tiktok?: string | null;
 }
 
+// Interface untuk struktur data paginasi dari Laravel (bisa digeneralisasi jika dipakai di banyak context)
+export interface PaginatedAnggotaResponse {
+  current_page: number;
+  data: AnggotaItem[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
 interface AnggotaContextType {
   anggotaList: AnggotaItem[];
   isLoading: boolean;
   error: string | null;
-  fetchAnggotaList: () => Promise<void>;
+  fetchAnggotaList: (searchQuery?: string, pageArg?: number, perPageArg?: number) => Promise<void>;
   getAnggotaById: (id: number) => Promise<AnggotaItem | null>;
   createAnggota: (payload: AnggotaPayload) => Promise<AnggotaItem | null>;
   updateAnggota: (
@@ -60,6 +76,10 @@ interface AnggotaContextType {
   ) => Promise<AnggotaItem | null>;
   deleteAnggota: (id: number) => Promise<boolean>;
   clearError: () => void;
+  currentPage: number;
+  totalPages: number;
+  totalAnggota: number;
+  anggotaPerPage: number;
 }
 
 const AnggotaContext = createContext<AnggotaContextType | undefined>(undefined);
@@ -69,25 +89,56 @@ export const AnggotaProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth(); // Use token if API requires authentication
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalAnggota, setTotalAnggota] = useState(0);
+  const [anggotaPerPage, setAnggotaPerPage] = useState(10); // Default items per page
 
   const clearError = () => setError(null);
 
-  const fetchAnggotaList = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await api.get<AnggotaItem[]>("/anggota");
-      setAnggotaList(response.data);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Gagal mengambil daftar anggota"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchAnggotaList = useCallback(
+    async (searchQuery?: string, pageArg?: number, perPageArg?: number) => {
+      setIsLoading(true);
+      setError(null);
+
+      // Use arguments if provided, otherwise use current state from context
+      const pageToFetch = pageArg !== undefined ? pageArg : currentPage;
+      const perPageToFetch =
+        perPageArg !== undefined ? perPageArg : anggotaPerPage;
+
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery && searchQuery.trim() !== "") {
+          params.append("search", searchQuery);
+        }
+        params.append("page", pageToFetch.toString());
+        params.append("per_page", perPageToFetch.toString());
+
+        const response = await api.get<PaginatedAnggotaResponse>(
+          `/anggota?${params.toString()}`
+        );
+        setAnggotaList(response.data.data);
+        setCurrentPage(response.data.current_page);
+        setTotalPages(response.data.last_page);
+        setTotalAnggota(response.data.total);
+        setAnggotaPerPage(response.data.per_page);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Gagal mengambil daftar anggota"
+        );
+        // Consider if you want to clear data or reset pagination on error
+        // setAnggotaList([]);
+        // setCurrentPage(1);
+        // setTotalPages(0);
+        // setTotalAnggota(0);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, anggotaPerPage] // Add currentPage and anggotaPerPage as dependencies
+  );
 
   const getAnggotaById = async (id: number): Promise<AnggotaItem | null> => {
     setIsLoading(true);
@@ -236,6 +287,7 @@ export const AnggotaProvider = ({ children }: { children: ReactNode }) => {
     updateAnggota,
     deleteAnggota,
     clearError,
+    currentPage, totalPages, totalAnggota, anggotaPerPage,
   };
 
   return (

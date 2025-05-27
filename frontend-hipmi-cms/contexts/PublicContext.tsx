@@ -98,7 +98,7 @@ export interface KontakUpdatePayload {
   kontak_alamat?: string;
   kontak_telepon?: string;
   kontak_email?: string;
-  kontak_maps?: string | null; // Allow explicitly setting to null or providing a new string
+  kontak_maps?: string | null;
 }
 
 export interface LandingPageComponentUpdatePayload {
@@ -107,6 +107,23 @@ export interface LandingPageComponentUpdatePayload {
   key_name?: string;
   value?: string | File | null;
   sort_order?: number | null;
+}
+
+// Interface generik untuk struktur data paginasi dari Laravel
+export interface PaginatedApiResponse<T> {
+  current_page: number;
+  data: T[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
 }
 interface PublicContextType {
   anggotaList: AnggotaItem[];
@@ -119,9 +136,21 @@ interface PublicContextType {
   loading: boolean;
   kontakData: KontakItem | null;
   landingPageData: LandingPageData;
-  fetchAnggota: () => Promise<void>;
+  fetchAnggota: (page?: number, perPage?: number) => Promise<void>;
   fetchAnggotaById: (id: number) => Promise<AnggotaItem | null>;
-  fetchBerita: () => Promise<void>;
+  fetchBerita: (
+    searchQuery?: string,
+    page?: number,
+    perPage?: number
+  ) => Promise<void>;
+  beritaCurrentPage: number;
+  beritaTotalPages: number;
+  beritaTotalItems: number;
+  beritaItemsPerPage: number;
+  anggotaCurrentPage: number;
+  anggotaTotalPages: number;
+  anggotaTotalItems: number;
+  anggotaItemsPerPage: number;
   fetchBeritaById: (id: number) => Promise<BeritaItem | null>;
   fetchKegiatan: () => Promise<void>;
   fetchKegiatanById: (id: number) => Promise<KegiatanItem | null>;
@@ -155,23 +184,46 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
   const [landingPageData, setLandingPageData] = useState<LandingPageData>({});
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  // State untuk paginasi berita publik
+  const [beritaCurrentPage, setBeritaCurrentPage] = useState(1);
+  const [beritaTotalPages, setBeritaTotalPages] = useState(0);
+  const [beritaTotalItems, setBeritaTotalItems] = useState(0);
+  const [beritaItemsPerPage, setBeritaItemsPerPage] = useState(9); // Default untuk halaman publik
 
-  const fetchAnggota = useCallback(async () => {
-    try {
+  const [anggotaCurrentPage, setAnggotaCurrentPage] = useState(1);
+  const [anggotaTotalPages, setAnggotaTotalPages] = useState(0);
+  const [anggotaTotalItems, setAnggotaTotalItems] = useState(0);
+  const [anggotaItemsPerPage, setAnggotaItemsPerPage] = useState(12); // Default untuk halaman publik
+
+  const fetchAnggota = useCallback(
+    async (page: number = 1, perPage: number = 12) => {
       setLoading(true);
       setError(null);
-      const response = await api.get("/public/anggota");
-      setAnggotaList(response.data);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Terjadi kesalahan saat mengambil data anggota"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const params = new URLSearchParams();
+        params.append("page", page.toString());
+        params.append("per_page", perPage.toString());
+
+        const response = await api.get<PaginatedApiResponse<AnggotaItem>>(
+          `/public/anggota?${params.toString()}`
+        );
+        setAnggotaList(response.data.data);
+        setAnggotaCurrentPage(response.data.current_page);
+        setAnggotaTotalPages(response.data.last_page);
+        setAnggotaTotalItems(response.data.total);
+        setAnggotaItemsPerPage(response.data.per_page);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Terjadi kesalahan saat mengambil data anggota"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   const fetchAnggotaById = useCallback(async (id: number) => {
     setLoading(true);
@@ -191,22 +243,42 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const fetchBerita = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get("/public/berita");
-      setBeritaList(response.data);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Terjadi kesalahan saat mengambil data berita"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const fetchBerita = useCallback(
+    async (searchQuery?: string, page: number = 1, perPage: number = 9) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery && searchQuery.trim() !== "") {
+          params.append("search", searchQuery);
+        }
+        params.append("page", page.toString());
+        params.append("per_page", perPage.toString());
+
+        const response = await api.get<PaginatedApiResponse<BeritaItem>>(
+          `/public/berita?${params.toString()}`
+        );
+        setBeritaList(response.data.data);
+        setBeritaCurrentPage(response.data.current_page);
+        setBeritaTotalPages(response.data.last_page);
+        setBeritaTotalItems(response.data.total);
+        setBeritaItemsPerPage(response.data.per_page);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Terjadi kesalahan saat mengambil data berita"
+        );
+        setBeritaList([]);
+        setBeritaCurrentPage(1);
+        setBeritaTotalPages(0);
+        setBeritaTotalItems(0);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   const fetchBeritaById = useCallback(async (id: number) => {
     setLoading(true);
@@ -381,10 +453,7 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateKontak = useCallback(
-    async (
-      id: number,
-      data: KontakUpdatePayload
-    ) => {
+    async (id: number, data: KontakUpdatePayload) => {
       setLoading(true);
       setError(null);
       try {
@@ -517,6 +586,14 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
     fetchAnggotaById,
     fetchBerita,
     fetchBeritaById,
+    beritaCurrentPage,
+    beritaTotalPages,
+    beritaTotalItems,
+    beritaItemsPerPage,
+    anggotaCurrentPage,
+    anggotaTotalPages,
+    anggotaTotalItems,
+    anggotaItemsPerPage,
     fetchKegiatan,
     fetchKegiatanById,
     fetchBidang,

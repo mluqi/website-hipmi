@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (newToken: string) => void;
   logout: () => void;
   setUser: React.Dispatch<React.SetStateAction<any | null>>;
+  updatePassword: (oldPassword: string, newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,6 +84,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updatePassword = async (oldPassword: string, newPassword: string): Promise<boolean> => {
+    setIsLoading(true);
+    // setError(null); // Dihapus agar error sebelumnya tidak hilang jika ada
+    try {
+      await api.post('/user/change-password', {
+        old_password: oldPassword,
+        new_password: newPassword,
+      });
+      // Tidak perlu fetch user lagi, karena password diubah di sisi server
+      // dan tidak ada state user yang perlu diupdate di client terkait password ini
+      setIsLoading(false);
+      return true;
+    } catch (err: any) {
+      let errorMessage = "Gagal mengubah password.";
+      if (err.response && err.response.data) {
+        if (err.response.data.errors) { // Laravel validation errors
+          const fieldErrors = Object.values(err.response.data.errors).flat().join(' ');
+          errorMessage = `Error Validasi: ${fieldErrors}`;
+        } else if (err.response.data.message) { // Custom error message
+          errorMessage = err.response.data.message;
+        }
+      }
+      // setError(errorMessage); // Dihapus agar error ditangani di page
+      setIsLoading(false);
+      throw new Error(errorMessage); // Melempar error agar bisa ditangkap di page
+    }
+  };
   const contextValue: AuthContextType = {
     user,
     token,
@@ -91,6 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login,
     setUser,
     logout,
+    updatePassword,
   };
 
   return (

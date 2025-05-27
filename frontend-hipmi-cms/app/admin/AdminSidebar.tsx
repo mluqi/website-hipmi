@@ -7,13 +7,14 @@ import {
   FaCalendarAlt,
   FaUsers,
   FaSignOutAlt,
-  FaUserCircle,
+  FaUserEdit,
   FaTachometerAlt,
   FaTimes,
   FaChair,
   FaLandmark,
   FaRegNewspaper,
   FaPhoneAlt,
+  FaLayerGroup
 } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -41,6 +42,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { href: "/admin/anggota", label: "Anggota", icon: FaUsers },
     { href: "/admin/jabatan", label: "List Jabatan", icon: FaChair },
     { href: "/admin/bidang", label: "List Bidang", icon: FaLandmark },
+    { href: "/admin/kategori", label: "List Kategori", icon: FaLayerGroup },
+    { href: "/admin/setting", label: "Settings", icon: FaUserEdit },
   ];
 
   const handleLogout = () => {

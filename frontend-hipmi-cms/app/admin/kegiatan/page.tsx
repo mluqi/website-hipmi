@@ -16,15 +16,37 @@ const AdminKegiatanPage = () => {
     fetchKegiatanList,
     deleteKegiatan,
     clearError,
+    currentPage,
+    totalPages,
+    kegiatanPerPage, // Jika ingin mengontrol perPage dari sini
   } = useKegiatan();
 
+  // State untuk search query jika ingin diintegrasikan dengan pagination
+  // const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
-    fetchKegiatanList();
-  }, [fetchKegiatanList]);
+    // Panggil dengan currentPage dari context atau 1 jika baru load
+    // Jika ada searchQuery, sertakan: fetchKegiatanList(searchQuery, currentPage, kegiatanPerPage)
+    fetchKegiatanList(undefined, currentPage, kegiatanPerPage);
+  }, [fetchKegiatanList, currentPage, kegiatanPerPage]);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) {
       await deleteKegiatan(id);
+      // Opsional: jika setelah delete ingin kembali ke halaman 1 atau halaman saat ini
+      // fetchKegiatanList(undefined, currentPage, kegiatanPerPage);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      fetchKegiatanList(undefined, currentPage + 1, kegiatanPerPage);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      fetchKegiatanList(undefined, currentPage - 1, kegiatanPerPage);
     }
   };
 
@@ -136,6 +158,28 @@ const AdminKegiatanPage = () => {
           </tbody>
         </table>
 
+        </div>
+      )}
+
+      {kegiatanList.length > 0 && totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage <= 1 || isLoading}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Sebelumnya
+          </button>
+          <span className="text-gray-700">
+            Halaman {currentPage} dari {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages || isLoading}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Berikutnya
+          </button>
         </div>
       )}
     </div>

@@ -21,11 +21,27 @@ export interface BeritaPayload {
   kategori: string;
 }
 
+export interface PaginatedBeritaResponse {
+  current_page: number;
+  data: BeritaItem[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
 interface BeritaContextType {
   beritaList: BeritaItem[];
   isLoading: boolean;
   error: string | null;
-  fetchBeritaList: () => Promise<void>;
+  fetchBeritaList: (searchQuery?: string, page?: number, perPage?: number) => Promise<void>;
   getBeritaById: (id: number) => Promise<BeritaItem | null>;
   createBerita: (payload: BeritaPayload) => Promise<BeritaItem | null>;
   updateBerita: (id: number, payload: BeritaPayload) => Promise<BeritaItem | null>;
@@ -33,6 +49,10 @@ interface BeritaContextType {
   clearError: () => void;
   isUploadingEditorImage: boolean; // State loading khusus untuk upload gambar editor
   uploadEditorImage: (file: File) => Promise<{ success: boolean; url?: string; id?: number; message?: string } | null>; // Tambahkan id ke tipe return
+  currentPage: number;
+  totalPages: number;
+  totalBerita: number;
+  beritaPerPage: number;
 }
 
 const BeritaContext = createContext<BeritaContextType | undefined>(undefined);
@@ -43,21 +63,44 @@ export const BeritaProvider = ({ children }: { children: ReactNode }) => {
   const [isUploadingEditorImage, setIsUploadingEditorImage] = useState(false); // State loading baru
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth(); // Ambil token jika API membutuhkan autentikasi
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalBerita, setTotalBerita] = useState(0);
+  const [beritaPerPage, setBeritaPerPage] = useState(10); // Default items per page
 
   const clearError = () => setError(null);
 
-  const fetchBeritaList = useCallback(async () => {
+  const fetchBeritaList = useCallback(async (searchQuery?: string, page: number = 1, perPage: number = 10) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.get<BeritaItem[]>('/berita'); // Endpoint: GET /api/berita
-      setBeritaList(response.data);
+      const params = new URLSearchParams();
+      if (searchQuery && searchQuery.trim() !== "") {
+        params.append('search', searchQuery);
+      }
+      params.append('page', page.toString());
+      params.append('per_page', perPage.toString());
+
+      const response = await api.get<PaginatedBeritaResponse>(`/berita?${params.toString()}`); 
+      setBeritaList(response.data.data);
+      setCurrentPage(response.data.current_page);
+      setTotalPages(response.data.last_page);
+      setTotalBerita(response.data.total);
+      setBeritaPerPage(response.data.per_page);
+
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Gagal mengambil daftar berita');
+      setBeritaList([]); // Kosongkan list jika error
+      setCurrentPage(1);
+      setTotalPages(0);
+      setTotalBerita(0);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  // Tidak ada dependensi eksternal yang berubah, hanya argumen dan state internal
+  // Jika perPage diambil dari state, tambahkan ke dependensi jika perlu
+  // Untuk saat ini, kita asumsikan perPage di-pass sebagai argumen atau default
+  }, []); 
 
   const getBeritaById = async (id: number): Promise<BeritaItem | null> => {
     setIsLoading(true);
@@ -214,8 +257,8 @@ export const BeritaProvider = ({ children }: { children: ReactNode }) => {
   }, [token]); // Tambahkan token sebagai dependensi jika Anda menggunakannya di header
 
   const contextValue: BeritaContextType = {
-    beritaList, isLoading, error, fetchBeritaList, getBeritaById, createBerita, updateBerita, deleteBerita, clearError,
-    isUploadingEditorImage, uploadEditorImage // Tambahkan fungsi baru ke context value
+    beritaList, isLoading, error, fetchBeritaList, getBeritaById, createBerita, updateBerita, deleteBerita, clearError, isUploadingEditorImage, uploadEditorImage,
+    currentPage, totalPages, totalBerita, beritaPerPage,
   };
 
   return <BeritaContext.Provider value={contextValue}>{children}</BeritaContext.Provider>;
