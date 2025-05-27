@@ -7,10 +7,6 @@ import { usePublic } from "@/contexts/PublicContext";
 import BlurText from "./BlurText/BlurText";
 import SplitText from "./SplitText/SplitText";
 
-const handleAnimationComplete = () => {
-  console.log("Animation completed!");
-};
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -20,12 +16,13 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import LoadingSpinner from "./ui/LoadingSpinner"; 
+import LoadingSpinner from "./ui/LoadingSpinner";
 
 const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 const Hero = () => {
-  const { landingPageData, fetchLandingPageComponents, loading, error } = usePublic();
+  const { landingPageData, fetchLandingPageComponents, loading, error } =
+    usePublic();
 
   useEffect(() => {
     if (!landingPageData.hero) {
@@ -37,19 +34,30 @@ const Hero = () => {
 
   const images = heroContent
     ? Object.values(heroContent)
-        .filter(item => item.type === 'image' && item.key_name.startsWith('image_') && item.value)
+        .filter(
+          (item) =>
+            item.type === "image" &&
+            item.key_name.startsWith("image_") &&
+            item.value
+        )
         .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-        .map(item => `${urlBase}/storage/${item.value}`)
-    : ["/assets/hero1.jpg", "/assets/hero2.jpg", "/assets/hero3.jpg"];
+        .map((item) => `${urlBase}/storage/${item.value}`)
+    : [
+        "/assets/placeholder.jpg",
+        "/assets/placeholder.jpg",
+        "/assets/placeholder.jpg",
+      ];
 
   const mainText = "BANGKIT BERSAMA HIPMI KOTA CIREBON";
-  const subText = heroContent?.text_sub?.value || "Bergabunglah bersama organisasi pengusaha muda terbesar di Indonesia";
+  const subText =
+    heroContent?.text_sub?.value ||
+    "Bergabunglah bersama organisasi pengusaha muda terbesar di Indonesia";
   const buttonText = heroContent?.button_text?.value || "Gabung Sekarang";
   const buttonLink = heroContent?.button_link?.value || "/kontak";
 
   const infoBoxesData = [];
   if (heroContent) {
-    for (let i = 1; i <= 4; i++) { 
+    for (let i = 1; i <= 4; i++) {
       const titleItem = heroContent[`infobox_${i}_title`];
       const descItem = heroContent[`infobox_${i}_description`];
       if (titleItem && descItem && titleItem.value && descItem.value) {
@@ -62,7 +70,12 @@ const Hero = () => {
     }
   } else {
     // Fallback infoboxes data
-    infoBoxesData.push({ id: 1, title: 48, description: "Tahun Berdiri" }, { id: 2, title: 6, description: "Cabang" }, { id: 3, title: 3000, description: "Anggota Aktif" }, { id: 4, title: 171, description: "Pengurus Inti" });
+    infoBoxesData.push(
+      { id: 1, title: 48, description: "Tahun Berdiri" },
+      { id: 2, title: 6, description: "Cabang" },
+      { id: 3, title: 3000, description: "Anggota Aktif" },
+      { id: 4, title: 171, description: "Pengurus Inti" }
+    );
   }
 
   const router = useRouter();
@@ -73,7 +86,10 @@ const Hero = () => {
 
   if (loading && !heroContent) {
     return (
-      <section id="home" className="bg-black flex justify-center items-center h-[840px]">
+      <section
+        id="home"
+        className="bg-black flex justify-center items-center h-[840px]"
+      >
         <LoadingSpinner />
       </section>
     );
@@ -96,7 +112,7 @@ const Hero = () => {
         >
           {images.length > 0 ? (
             images.map((src, index) => (
-              <SwiperSlide key={src || index}> 
+              <SwiperSlide key={src || index}>
                 <Image
                   src={src}
                   alt={`Slide ${index + 1}`}
@@ -108,7 +124,9 @@ const Hero = () => {
               </SwiperSlide>
             ))
           ) : (
-            <SwiperSlide> {/* Fallback jika tidak ada gambar */}
+            <SwiperSlide>
+              {" "}
+              {/* Fallback jika tidak ada gambar */}
               <div className="w-full h-full bg-gray-700 flex items-center justify-center">
                 <p>No images available</p>
               </div>
@@ -176,7 +194,9 @@ const Hero = () => {
           </div>
         </div>
         {error && !loading && !heroContent && (
-          <p className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-red-500 z-30">Gagal memuat konten hero: {error}</p>
+          <p className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-red-500 z-30">
+            Gagal memuat konten hero: {error}
+          </p>
         )}
       </div>
     </section>

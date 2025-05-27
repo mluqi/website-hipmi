@@ -9,14 +9,14 @@ import React, {
   useCallback,
 } from "react";
 import api from "@/services/api";
-import { useAuth } from "./AuthContext"; 
+import { useAuth } from "./AuthContext";
 
 export interface KegiatanItem {
   id: number;
   kegiatan_judul: string;
   kegiatan_isi: string;
   kegiatan_foto: string | null;
-  kegiatan_kategori: string; 
+  kegiatan_kategori: string;
   kegiatan_tanggal: string;
   kegiatan_waktu: string;
   kegiatan_lokasi: string;
@@ -74,7 +74,6 @@ interface KegiatanContextType {
 const KegiatanContext = createContext<KegiatanContextType | undefined>(
   undefined
 );
-
 export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
   const [kegiatanList, setKegiatanList] = useState<KegiatanItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -253,7 +252,7 @@ export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      await api.delete(`/kegiatan/${id}`); 
+      await api.delete(`/kegiatan/${id}`);
       fetchKegiatanList();
       return true;
     } catch (err: any) {

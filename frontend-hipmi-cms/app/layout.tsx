@@ -10,6 +10,7 @@ import { BidangProvider } from "@/contexts/BidangContext";
 import { KategoriProvider } from "@/contexts/KategoriContext";
 import { PublicProvider } from "@/contexts/PublicContext";
 import { CustomProvider } from "@/contexts/CustomContext";
+import { PesanProvider } from "@/contexts/PesanContext";
 
 const poppinsFont = Poppins({
   subsets: ["latin"],
@@ -41,9 +42,11 @@ export default function RootLayout({
                   <JabatanProvider>
                     <BidangProvider>
                       <KategoriProvider>
-                        <CustomProvider>
-                          <PublicProvider>{children}</PublicProvider>
-                        </CustomProvider>
+                        <PesanProvider>
+                          <CustomProvider>
+                            <PublicProvider>{children}</PublicProvider>
+                          </CustomProvider>
+                        </PesanProvider>
                       </KategoriProvider>
                     </BidangProvider>
                   </JabatanProvider>

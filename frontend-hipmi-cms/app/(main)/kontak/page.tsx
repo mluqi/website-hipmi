@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { usePublic } from "@/contexts/PublicContext";
+import api from "@/services/api"; // Import service API Anda
 
 const Kontak = () => {
   const {
@@ -15,11 +16,14 @@ const Kontak = () => {
     error: contextError,
   } = usePublic();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+    pesan_nama: "",
+    pesan_email: "",
+    pesan_subjek: "",
+    pesan_isi: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchKontak();
@@ -35,12 +39,44 @@ const Kontak = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form data submitted:", formData);
-    alert("Pesan Anda telah terkirim! (Simulasi)");
+    setIsSubmitting(true);
+    setSubmitSuccess(null);
+    setSubmitError(null);
 
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    try {
+      const response = await api.post("/public/pesan", formData);
+      setSubmitSuccess(response.data.message || "Pesan Anda berhasil dikirim!");
+      setFormData({
+        pesan_nama: "",
+        pesan_email: "",
+        pesan_subjek: "",
+        pesan_isi: "",
+      }); // Reset form
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        if (err.response.data.errors) {
+          // Handle validation errors
+          const errors = Object.values(err.response.data.errors)
+            .flat()
+            .join(". ");
+          setSubmitError(`Gagal mengirim pesan: ${errors}`);
+        } else {
+          setSubmitError(
+            err.response.data.message ||
+              "Terjadi kesalahan saat mengirim pesan."
+          );
+        }
+      } else {
+        setSubmitError(
+          "Tidak dapat terhubung ke server. Silakan coba lagi nanti."
+        );
+      }
+      console.error("Form submission error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -83,7 +119,9 @@ const Kontak = () => {
                   <p className="text-gray-600 text-sm">Memuat alamat...</p>
                 )}
                 {kontakData && (
-                  <p className="text-gray-600 text-sm">{kontakData.kontak_alamat}</p>
+                  <p className="text-gray-600 text-sm">
+                    {kontakData.kontak_alamat}
+                  </p>
                 )}
                 {!contextLoading && !kontakData && (
                   <p className="text-gray-600 text-sm">
@@ -187,7 +225,7 @@ const Kontak = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
-                  htmlFor="name"
+                  htmlFor="pesan_nama"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Nama Lengkap
@@ -195,9 +233,9 @@ const Kontak = () => {
                 {/* Fokus input bisa ke warna accent atau primary */}
                 <Input
                   type="text"
-                  name="name"
-                  id="name"
-                  value={formData.name}
+                  name="pesan_nama"
+                  id="pesan_nama"
+                  value={formData.pesan_nama}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent transition-colors text-textcolor"
@@ -205,16 +243,16 @@ const Kontak = () => {
               </div>
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="pesan_email"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Alamat Email
                 </label>
                 <Input
                   type="email"
-                  name="email"
-                  id="email"
-                  value={formData.email}
+                  name="pesan_email"
+                  id="pesan_email"
+                  value={formData.pesan_email}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent transition-colors text-textcolor"
@@ -222,16 +260,16 @@ const Kontak = () => {
               </div>
               <div>
                 <label
-                  htmlFor="subject"
+                  htmlFor="pesan_subjek"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Subjek
                 </label>
                 <Input
                   type="text"
-                  name="subject"
-                  id="subject"
-                  value={formData.subject}
+                  name="pesan_subjek"
+                  id="pesan_subjek"
+                  value={formData.pesan_subjek}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent transition-colors text-textcolor"
@@ -239,28 +277,38 @@ const Kontak = () => {
               </div>
               <div>
                 <label
-                  htmlFor="message"
+                  htmlFor="pesan_isi"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Pesan Anda
                 </label>
                 <Textarea
-                  name="message"
-                  id="message"
+                  name="pesan_isi"
+                  id="pesan_isi"
                   rows={5}
-                  value={formData.message}
+                  value={formData.pesan_isi}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent transition-colors text-textcolor"
                 />
               </div>
+              {submitSuccess && (
+                <p className="text-sm text-green-600 bg-green-100 p-3 rounded-md">
+                  {submitSuccess}
+                </p>
+              )}
+              {submitError && (
+                <p className="text-sm text-red-600 bg-red-100 p-3 rounded-md">
+                  {submitError}
+                </p>
+              )}
               <div>
-                {/* Tombol bisa menggunakan warna accent atau primary */}
                 <Button
                   type="submit"
-                  className="w-full bg-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  disabled={isSubmitting}
+                  className="w-full bg-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-70"
                 >
-                  Kirim Pesan
+                  {isSubmitting ? "Mengirim..." : "Kirim Pesan"}
                 </Button>
               </div>
             </form>
