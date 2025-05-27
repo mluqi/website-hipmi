@@ -11,10 +11,21 @@ class AnggotaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $anggota = Anggota::all();
-        return response()->json($anggota, 200);
+        $query = Anggota::query();
+
+        // Search functionality (opsional, bisa ditambahkan jika diperlukan di admin)
+        if ($request->has('search') && $request->input('search') != '') {
+            $searchTerm = $request->input('search');
+            // Sesuaikan kolom pencarian sesuai kebutuhan
+            $query->where('anggota_nama', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('anggota_email', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $perPage = $request->input('per_page', 10); // Default 10 item per halaman
+        $anggota = $query->orderBy('id', 'desc')->paginate($perPage);
+        return response()->json($anggota);
     }
 
     /**

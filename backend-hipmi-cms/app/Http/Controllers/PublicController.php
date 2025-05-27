@@ -13,10 +13,21 @@ use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
-    public function getAllBerita()
+    public function getAllBerita(Request $request)
     {
         try {
-            $berita = Berita::all(); 
+            $query = Berita::query();
+
+            if ($request->has('search') && $request->input('search') != '') {
+                $searchTerm = $request->input('search');
+                $query->where('berita_judul', 'LIKE', '%' . $searchTerm . '%');
+            }
+
+            $query->orderBy('berita_tanggal', 'desc')->orderBy('id', 'desc');
+
+            $perPage = $request->input('per_page', 9); 
+            $berita = $query->paginate($perPage);
+
             return response()->json($berita);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Gagal mengambil data berita', 'error' => $e->getMessage()], 500);
@@ -59,17 +70,23 @@ class PublicController extends Controller
         }
     }
 
-    public function getAllAnggota()
+    public function getAllAnggota(Request $request)
     {
         try {
-            // Eager load relasi jabatan dan bidang
-            $anggota = Anggota::with(['jabatan', 'bidang'])->get()->map(function ($item) {
+            $query = Anggota::with(['jabatan', 'bidang']);
+
+            $query->orderBy('id', 'desc');
+
+            $perPage = $request->input('per_page', 12); // Default 12 item per halaman, bisa disesuaikan
+            $anggotaPaginated = $query->paginate($perPage);
+
+            // Map data untuk menambahkan nama jabatan dan bidang
+            $anggotaPaginated->getCollection()->transform(function ($item) {
                 $item->anggota_jabatan_nama = $item->jabatan ? $item->jabatan->jabatan_name : null;
                 $item->anggota_bidang_nama = $item->bidang ? $item->bidang->bidang_nama : null;
-
                 return $item;
             });
-            return response()->json($anggota);
+            return response()->json($anggotaPaginated);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Gagal mengambil data anggota', 'error' => $e->getMessage()], 500);
         }
@@ -78,12 +95,10 @@ class PublicController extends Controller
     public function getAnggotaById($id)
     {
         try{
-            // Eager load relasi jabatan dan bidang
             $anggota = Anggota::with(['jabatan', 'bidang'])->find($id);
             if (!$anggota) {
                 return response()->json(['message' => 'Anggota tidak ditemukan'], 404);
             }
-            // Ganti ID dengan nama dari relasi
             $anggota->anggota_jabatan_nama = $anggota->jabatan ? $anggota->jabatan->jabatan_name : null;
             $anggota->anggota_bidang_nama = $anggota->bidang ? $anggota->bidang->bidang_nama : null;
             // Hapus objek relasi jika tidak ingin dikirim ke frontend

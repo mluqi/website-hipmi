@@ -12,9 +12,18 @@ class BeritaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $berita = Berita::all();
+        $query = Berita::query();
+        if($request->has('search') && $request->input('search') != '') {
+            $searchTerm = $request->input('search');
+            $query->where('berita_judul', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $query->orderBy('berita_tanggal', 'desc')->orderBy('id', 'desc');
+        $perPage = $request->input('per_page', 10);
+        $berita = $query->paginate($perPage);
+        
         return response()->json($berita);
     }
 

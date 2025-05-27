@@ -13,6 +13,7 @@ use App\Http\Controllers\SejarahController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\LandingPageComponentController;
 use App\Http\Controllers\EditorImageUploadController;
+use App\Http\Controllers\KategoriController;
 
 
 /*
@@ -49,6 +50,10 @@ Route::prefix('public')->group(function () {
     Route::get('/jabatan', [PublicController::class, 'getAllJabatan']);
     Route::get('/jabatan/{id}', [PublicController::class, 'getJabatanById']);
 
+    // Kategori
+    Route::get('/kategori', [PublicController::class, 'getAllKategori']);
+    Route::get('/kategori/{id}', [PublicController::class, 'getKategoriById']);
+
     // Sejarah
     Route::get('/sejarah', [PublicController::class, 'getSejarahContent']);
 
@@ -57,6 +62,7 @@ Route::prefix('public')->group(function () {
 
     //kontak
     Route::get('/kontak', [PublicController::class, 'getKontakContent']);
+    
 });
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -75,5 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('sejarah', SejarahController::class);
     Route::apiResource('content', LandingPageComponentController::class);
     Route::apiResource('kontak', KontakController::class);
+    Route::apiResource('kategori', KategoriController::class);
+    Route::post('/user/change-password', [AuthController::class, 'updatePassword']);
     Route::post('/upload-image-editor', [EditorImageUploadController::class, 'upload'])->name('editor.image.upload');
 });

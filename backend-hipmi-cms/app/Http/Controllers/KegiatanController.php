@@ -12,9 +12,20 @@ class KegiatanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kegiatan = Kegiatan::all();
+        $query = Kegiatan::query();
+
+        // Search functionality (opsional)
+        if ($request->has('search') && $request->input('search') != '') {
+            $searchTerm = $request->input('search');
+            $query->where('kegiatan_judul', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        // Order by date descending
+        $query->orderBy('kegiatan_tanggal', 'desc')->orderBy('id', 'desc');
+        $perPage = $request->input('per_page', 10); // Default 10 item per halaman
+        $kegiatan = $query->paginate($perPage);
         return response()->json($kegiatan);
     }
 
