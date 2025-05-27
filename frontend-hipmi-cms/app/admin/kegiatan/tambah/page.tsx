@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { useKegiatan, KegiatanPayload } from "@/contexts/KegiatanContext";
+import { useKegiatan, KegiatanPayload } from "@/contexts/KegiatannContext";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 

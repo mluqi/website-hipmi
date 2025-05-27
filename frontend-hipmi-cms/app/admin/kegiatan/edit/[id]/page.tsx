@@ -11,7 +11,7 @@ import {
   useKegiatan,
   KegiatanPayload,
   KegiatanItem,
-} from "@/contexts/KegiatanContext";
+} from "@/contexts/KegiatannContext";
 import { useRouter, useParams } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Image from "next/image";

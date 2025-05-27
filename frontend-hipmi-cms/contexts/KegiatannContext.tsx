@@ -63,8 +63,7 @@ interface KegiatanContextType {
     id: number,
     payload: KegiatanPayload
   ) => Promise<KegiatanItem | null>;
-  deleteKegiatan: (id: number) => Promise<boolean>;
-  clearError: () => void;
+  deleteKegiatan: (id: number) => Promise<boolean>;clearError: () => void;
   currentPage: number;
   totalPages: number;
   totalKegiatan: number;
@@ -74,6 +73,7 @@ interface KegiatanContextType {
 const KegiatanContext = createContext<KegiatanContextType | undefined>(
   undefined
 );
+
 export const KegiatanProvider = ({ children }: { children: ReactNode }) => {
   const [kegiatanList, setKegiatanList] = useState<KegiatanItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);

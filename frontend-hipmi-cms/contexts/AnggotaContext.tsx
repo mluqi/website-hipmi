@@ -182,7 +182,6 @@ export const AnggotaProvider = ({ children }: { children: ReactNode }) => {
       fetchAnggotaList();
       return response.data;
     } catch (err: any) {
-      // Simplified error handling, can be expanded like in KegiatanContext
       setError(
         err.response?.data?.message ||
           err.message ||

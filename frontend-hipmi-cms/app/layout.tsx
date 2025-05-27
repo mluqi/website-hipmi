@@ -3,7 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BeritaProvider } from "@/contexts/BeritaContext";
-import { KegiatanProvider } from "@/contexts/KegiatanContext";
+import { KegiatanProvider } from "@/contexts/KegiatannContext";
 import { AnggotaProvider } from "@/contexts/AnggotaContext";
 import { JabatanProvider } from "@/contexts/JabatanContext";
 import { BidangProvider } from "@/contexts/BidangContext";
