@@ -9,6 +9,7 @@ use App\Models\Kegiatan;
 use App\Models\Berita;
 use App\Models\Sejarah;
 use App\Models\Kontak;
+use App\Models\Pesan;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -174,6 +175,28 @@ class PublicController extends Controller
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Gagal mengambil data kontak', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function addPesan(Request $request)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'pesan_nama' => 'required|string|max:255',
+            'pesan_email' => 'required|email|max:255',
+            'pesan_subjek' => 'required|string|max:255',
+            'pesan_isi' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            Pesan::create($request->all());
+            return response()->json(['message' => 'Pesan Anda berhasil dikirim!'], 201);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal menyimpan pesan: ' . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat mengirim pesan.'], 500);
         }
     }
 }

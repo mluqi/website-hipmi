@@ -14,6 +14,7 @@ use App\Http\Controllers\KontakController;
 use App\Http\Controllers\LandingPageComponentController;
 use App\Http\Controllers\EditorImageUploadController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PesanController;
 
 
 /*
@@ -63,6 +64,8 @@ Route::prefix('public')->group(function () {
     //kontak
     Route::get('/kontak', [PublicController::class, 'getKontakContent']);
     
+    //pesan
+    Route::post('/pesan', [PublicController::class, 'addPesan']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -84,4 +87,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('kategori', KategoriController::class);
     Route::post('/user/change-password', [AuthController::class, 'updatePassword']);
     Route::post('/upload-image-editor', [EditorImageUploadController::class, 'upload'])->name('editor.image.upload');
+
+    // pesan
+    Route::get('/pesan', [PesanController::class, 'index']);
+    Route::get('/pesan/{id}', [PesanController::class, 'show']);
+    Route::put('/pesan/{id}/change-status', [PesanController::class, 'changePesanStatus']);
+    Route::delete('/pesan/{id}', [PesanController::class, 'destroy']);
 });

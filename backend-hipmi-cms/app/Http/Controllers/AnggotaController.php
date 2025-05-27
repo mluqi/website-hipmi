@@ -15,10 +15,8 @@ class AnggotaController extends Controller
     {
         $query = Anggota::query();
 
-        // Search functionality (opsional, bisa ditambahkan jika diperlukan di admin)
         if ($request->has('search') && $request->input('search') != '') {
             $searchTerm = $request->input('search');
-            // Sesuaikan kolom pencarian sesuai kebutuhan
             $query->where('anggota_nama', 'LIKE', '%' . $searchTerm . '%')
                   ->orWhere('anggota_email', 'LIKE', '%' . $searchTerm . '%');
         }
