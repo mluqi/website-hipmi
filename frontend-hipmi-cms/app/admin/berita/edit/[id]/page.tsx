@@ -19,13 +19,14 @@ const ReactQuill =
 const urlBase = "http://127.0.0.1:8000";
 
 const EditBeritaPage = () => {
-  const { 
-    getBeritaById, 
-    updateBerita, 
-    isLoading, 
-    error, 
-    clearError, 
-    uploadEditorImage } = useBerita(); // Ambil uploadEditorImage
+  const {
+    getBeritaById,
+    updateBerita,
+    isLoading,
+    error,
+    clearError,
+    uploadEditorImage,
+  } = useBerita(); // Ambil uploadEditorImage
   const router = useRouter();
   const params = useParams();
 
@@ -100,10 +101,10 @@ const EditBeritaPage = () => {
     let match;
     while ((match = imgRegex.exec(isi)) !== null) {
       const base64Data = match[1];
-      const fullBase64Src = match[0].substring(10, match[0].length -1); // Ambil src="data:..."
+      const fullBase64Src = match[0].substring(10, match[0].length - 1); // Ambil src="data:..."
       try {
-        const blob = await fetch(fullBase64Src).then(res => res.blob());
-        const extension = blob.type.split('/')[1] || 'png';
+        const blob = await fetch(fullBase64Src).then((res) => res.blob());
+        const extension = blob.type.split("/")[1] || "png";
         const fileName = `editor_image_${Date.now()}.${extension}`;
         const imageFile = new File([blob], fileName, { type: blob.type });
         imagesToUpload.push({ placeholder: fullBase64Src, file: imageFile });
@@ -119,9 +120,14 @@ const EditBeritaPage = () => {
         for (const imageData of imagesToUpload) {
           const result = await uploadEditorImage(imageData.file);
           if (result && result.success && result.url) {
-            processedIsi = processedIsi.replace(imageData.placeholder, result.url);
+            processedIsi = processedIsi.replace(
+              imageData.placeholder,
+              result.url
+            );
           } else {
-            throw new Error(result?.message || `Gagal mengunggah salah satu gambar editor.`);
+            throw new Error(
+              result?.message || `Gagal mengunggah salah satu gambar editor.`
+            );
           }
         }
       } catch (uploadAllError: any) {
@@ -286,13 +292,13 @@ const EditBeritaPage = () => {
           </label>
           {currentFotoUrl && (
             <div className="relative w-[150px] h-[150px]">
-            <Image
-              src={currentFotoUrl}
-              alt="Foto saat ini"
-              fill
-              sizes="(max-width: 768px) 150px, 150px"
-              className="rounded-md object-cover mb-2"
-            />
+              <Image
+                src={currentFotoUrl}
+                alt="Foto saat ini"
+                fill
+                sizes="(max-width: 768px) 150px, 150px"
+                className="rounded-md object-cover mb-2"
+              />
             </div>
           )}
           <input

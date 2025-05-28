@@ -13,7 +13,7 @@ import {
   AnggotaItem,
 } from "@/contexts/AnggotaContext";
 import { useRouter, useParams } from "next/navigation";
-import { usePublic } from "@/contexts/PublicContext"; 
+import { usePublic } from "@/contexts/PublicContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 import Image from "next/image";

@@ -14,11 +14,18 @@ const Footer = () => {
 
   // Ambil data spesifik untuk footer, dengan fallback
   const footerContent = landingPageData.footer;
-  const logoImageUrl = footerContent?.logo_image?.value ? `${urlBase}/storage/${footerContent.logo_image.value}` : "/assets/logo.png"; // Fallback ke logo default jika ada
-  const description = footerContent?.description?.value || "Deskripsi default footer jika tidak ada data.";
-  const addressLine1 = footerContent?.address_line_1?.value || "Jl. Contoh No. 1";
-  const addressLine2 = footerContent?.address_line_2?.value || "Kota Contoh, Negara Contoh";
-  const emailAddress = footerContent?.email_address?.value || "info@example.com";
+  const logoImageUrl = footerContent?.logo_image?.value
+    ? `${urlBase}/storage/${footerContent.logo_image.value}`
+    : "/assets/logo.png"; // Fallback ke logo default jika ada
+  const description =
+    footerContent?.description?.value ||
+    "Deskripsi default footer jika tidak ada data.";
+  const addressLine1 =
+    footerContent?.address_line_1?.value || "Jl. Contoh No. 1";
+  const addressLine2 =
+    footerContent?.address_line_2?.value || "Kota Contoh, Negara Contoh";
+  const emailAddress =
+    footerContent?.email_address?.value || "info@example.com";
   const facebookUrl = footerContent?.facebook_url?.value || "#";
   const instagramUrl = footerContent?.instagram_url?.value || "#";
   const twitterUrl = footerContent?.twitter_url?.value || "#";
@@ -35,15 +42,19 @@ const Footer = () => {
                  bg-gradient-to-br from-secondary to-slate-800"
       >
         {/* Wrapper untuk konten utama agar berada di atas background pattern */}
-        <div className="relative z-10"> 
-          <div className="container mx-auto px-4"> {/* Tambahkan px-4 untuk konsistensi padding container */}
+        <div className="relative z-10">
+          <div className="container mx-auto px-4">
+            {" "}
+            {/* Tambahkan px-4 untuk konsistensi padding container */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-12 mb-10 xl:mb-12 items-start pt-8 border-accent/30">
               {/* Kolom 1: Logo dan Deskripsi Singkat */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Link href="/" className="mb-4 inline-block">
                   <Image
                     src={logoImageUrl}
-                    alt={footerContent?.logo_image?.key_name || "Logo Perusahaan"}
+                    alt={
+                      footerContent?.logo_image?.key_name || "Logo Perusahaan"
+                    }
                     width={500}
                     height={500}
                     className="w-44 h-auto object-contain"
@@ -169,11 +180,11 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      <div
-        className="absolute inset-0 z-0 
+        <div
+          className="absolute inset-0 z-0 
                    bg-[url('/assets/patterns/geometric-lines.svg')] bg-repeat 
                    opacity-10"
-      ></div>
+        ></div>
       </footer>
     </>
   );

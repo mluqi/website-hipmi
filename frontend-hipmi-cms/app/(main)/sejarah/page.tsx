@@ -1,20 +1,26 @@
 "use client"; // Karena kita akan menggunakan hooks (useContext, useEffect, useState)
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { usePublic } from '@/contexts/PublicContext'; // Impor usePublic
-import LoadingSpinner from '@/components/ui/LoadingSpinner'; // Impor LoadingSpinner
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { usePublic } from "@/contexts/PublicContext"; // Impor usePublic
+import LoadingSpinner from "@/components/ui/LoadingSpinner"; // Impor LoadingSpinner
 
 const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 const Sejarah = () => {
-  const { sejarahData, fetchSejarah, loading: contextLoading, error: contextError } = usePublic();
+  const {
+    sejarahData,
+    fetchSejarah,
+    loading: contextLoading,
+    error: contextError,
+  } = usePublic();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      if (!sejarahData) { // Hanya fetch jika data belum ada di context
+      if (!sejarahData) {
+        // Hanya fetch jika data belum ada di context
         await fetchSejarah();
       }
       setIsLoading(false);
@@ -33,7 +39,8 @@ const Sejarah = () => {
         <div className="relative z-10 container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Sejarah HIPMI</h1>
           <p className="text-lg md:text-xl opacity-90 max-w-3xl mx-auto">
-            Menelusuri jejak langkah Himpunan Pengusaha Muda Indonesia dalam membangun ekosistem wirausaha dan mencetak pemimpin ekonomi bangsa.
+            Menelusuri jejak langkah Himpunan Pengusaha Muda Indonesia dalam
+            membangun ekosistem wirausaha dan mencetak pemimpin ekonomi bangsa.
           </p>
         </div>
       </div>
@@ -66,10 +73,18 @@ const Sejarah = () => {
                 <div className="order-1 lg:order-1">
                   <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-md">
                     <Image
-                      src={sejarahData.sejarah_foto ? `${urlBase}/storage/${sejarahData.sejarah_foto}` : "/assets/placeholder.jpg"}
-                      alt={sejarahData.sejarah_foto ? "Sejarah HIPMI" : "Placeholder Sejarah"}
+                      src={
+                        sejarahData.sejarah_foto
+                          ? `${urlBase}/storage/${sejarahData.sejarah_foto}`
+                          : "/assets/placeholder.jpg"
+                      }
+                      alt={
+                        sejarahData.sejarah_foto
+                          ? "Sejarah HIPMI"
+                          : "Placeholder Sejarah"
+                      }
                       fill
-                      sizes='100vw'
+                      sizes="100vw"
                       priority
                       className="object-cover"
                     />
@@ -85,7 +100,11 @@ const Sejarah = () => {
                 <div className="order-2 lg:order-2 prose prose-slate max-w-none lg:prose-lg">
                   {/* Menggunakan dangerouslySetInnerHTML untuk merender HTML dari ReactQuill */}
                   {/* Pastikan konten dari backend sudah di-sanitize untuk mencegah XSS */}
-                  <div dangerouslySetInnerHTML={{ __html: sejarahData.sejarah_konten }} />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: sejarahData.sejarah_konten,
+                    }}
+                  />
                 </div>
               </div>
             </div>

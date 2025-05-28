@@ -60,7 +60,7 @@ const Dashboard = () => {
         if (item.type === "text") {
           initialValue = item.value || "";
         } else {
-          initialValue = item.value; 
+          initialValue = item.value;
           if (item.value) {
             initialPreview = `${urlBase}/storage/${item.value}`;
           }

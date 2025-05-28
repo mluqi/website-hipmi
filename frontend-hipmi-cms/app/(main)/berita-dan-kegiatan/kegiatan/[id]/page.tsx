@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { usePublic } from "@/contexts/PublicContext";
-import type { KegiatanItem } from "@/contexts/PublicContext"; 
+import type { KegiatanItem } from "@/contexts/PublicContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import {
   FaCalendarAlt,
@@ -13,7 +13,7 @@ import {
   FaTags,
   FaMapMarkerAlt,
   FaInfoCircle,
-} from "react-icons/fa"; 
+} from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 
 const imageStorageBaseUrl =
@@ -112,7 +112,7 @@ const KegiatanDetailPage = () => {
     <main className="bg-slate-50 pt-28 md:pt-36 pb-16 min-h-screen">
       <div className="container mx-auto px-4 max-w-4xl">
         <button
-          onClick={() => router.back()} 
+          onClick={() => router.back()}
           className="mb-6 inline-flex items-center text-sm font-medium text-textcolor hover:text-textcolor/80"
         >
           <IoArrowBack className="mr-2 text-lg" /> Kembali
@@ -172,7 +172,9 @@ const KegiatanDetailPage = () => {
                 <div className="flex items-center sm:col-span-2">
                   <FaMapMarkerAlt className="mr-3 text-lg text-primary flex-shrink-0" />
                   <div>
-                    <span className="font-semibold block text-textcolor">Lokasi</span>
+                    <span className="font-semibold block text-textcolor">
+                      Lokasi
+                    </span>
                     {kegiatan.kegiatan_lokasi}
                   </div>
                 </div>

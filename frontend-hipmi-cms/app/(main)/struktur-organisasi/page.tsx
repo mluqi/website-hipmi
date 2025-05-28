@@ -11,7 +11,8 @@ import {
 import { usePublic } from "@/contexts/PublicContext";
 import { AnggotaItem } from "@/contexts/PublicContext";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/storage/";
+const baseUrl =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/storage/";
 
 const StrukturOrganisasi = () => {
   const { anggotaList, fetchAnggota, loading, error } = usePublic();
@@ -46,11 +47,21 @@ const StrukturOrganisasi = () => {
             Jajaran Pengurus
           </h2>
 
-          {loading && <p className="text-center text-gray-600 text-lg">Memuat data pengurus...</p>}
-          {error && <p className="text-center text-red-500 text-lg">Gagal memuat data: {error}</p>}
-          
+          {loading && (
+            <p className="text-center text-gray-600 text-lg">
+              Memuat data pengurus...
+            </p>
+          )}
+          {error && (
+            <p className="text-center text-red-500 text-lg">
+              Gagal memuat data: {error}
+            </p>
+          )}
+
           {!loading && !error && anggotaList.length === 0 && (
-            <p className="text-center text-gray-600 text-lg">Belum ada data pengurus untuk ditampilkan.</p>
+            <p className="text-center text-gray-600 text-lg">
+              Belum ada data pengurus untuk ditampilkan.
+            </p>
           )}
 
           {!loading && !error && anggotaList.length > 0 && (
@@ -59,7 +70,7 @@ const StrukturOrganisasi = () => {
                 const photoUrl = member.anggota_foto
                   ? `${baseUrl}${member.anggota_foto}`
                   : "/assets/no-profile.png";
-                
+
                 return (
                   <div key={member.id} className="text-center group">
                     <div className="relative w-36 h-36 md:w-40 md:h-40 mx-auto mb-4 overflow-hidden rounded-full shadow-lg">
@@ -69,7 +80,9 @@ const StrukturOrganisasi = () => {
                         fill
                         sizes="(max-width: 768px) 144px, 160px"
                         className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        onError={(e) => (e.currentTarget.src = "/assets/no-profile.png")}
+                        onError={(e) =>
+                          (e.currentTarget.src = "/assets/no-profile.png")
+                        }
                       />
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pt-16">
                         {member.anggota_facebook && (
@@ -134,8 +147,16 @@ const StrukturOrganisasi = () => {
           <h2 className="text-3xl md:text-4xl font-semibold text-textcolor mb-10 md:mb-12 text-center">
             Daftar Lengkap Pengurus
           </h2>
-          {loading && <p className="text-center text-gray-600">Memuat daftar pengurus...</p>}
-          {error && <p className="text-center text-red-500">Gagal memuat daftar: {error}</p>}
+          {loading && (
+            <p className="text-center text-gray-600">
+              Memuat daftar pengurus...
+            </p>
+          )}
+          {error && (
+            <p className="text-center text-red-500">
+              Gagal memuat daftar: {error}
+            </p>
+          )}
           {!loading && !error && (
             <div className="bg-white rounded-xl shadow-xl overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">

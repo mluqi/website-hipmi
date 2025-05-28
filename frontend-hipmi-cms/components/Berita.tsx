@@ -160,7 +160,10 @@ const Berita: React.FC = () => {
                           {activity.kegiatan_kategori}
                         </span>
                       )}
-                      <a href={`/berita-dan-kegiatan/kegiatan/${activity.id}`} className="text-lg font-bold text-textcolor mb-1 line-clamp-2">
+                      <a
+                        href={`/berita-dan-kegiatan/kegiatan/${activity.id}`}
+                        className="text-lg font-bold text-textcolor mb-1 line-clamp-2"
+                      >
                         {activity.kegiatan_judul}
                       </a>
                       <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-2">

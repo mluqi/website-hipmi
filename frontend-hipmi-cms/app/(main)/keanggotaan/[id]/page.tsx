@@ -291,7 +291,9 @@ const AnggotaDetailPage = () => {
                 </h2>
                 <div
                   className="prose prose-slate lg:prose-xl max-w-none text-textcolor mt-6"
-                  dangerouslySetInnerHTML={{ __html: anggota.anggota_pengalaman }}
+                  dangerouslySetInnerHTML={{
+                    __html: anggota.anggota_pengalaman,
+                  }}
                 />
               </section>
             </div>

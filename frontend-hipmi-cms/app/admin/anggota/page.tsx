@@ -114,12 +114,14 @@ const AdminAnggotaPage = () => {
                   <td className="py-3 px-4">{anggota.anggota_nama}</td>
                   {/* <td className="py-3 px-4">{anggota.anggota_email}</td> */}
                   {/* <td className="py-3 px-4">{anggota.anggota_telepon}</td> */}
-                  <td className="py-3 px-4">{jabatanList.map((jabatan) => {
-                    if (jabatan.id === anggota.anggota_jabatan) {
-                      return jabatan.jabatan_name;
-                    }
-                    return null;
-                  })}</td>
+                  <td className="py-3 px-4">
+                    {jabatanList.map((jabatan) => {
+                      if (jabatan.id === anggota.anggota_jabatan) {
+                        return jabatan.jabatan_name;
+                      }
+                      return null;
+                    })}
+                  </td>
                   {/* <td className="py-3 px-4">{anggota.anggota_bidang}</td> */}
                   {/* <td className="py-3 px-4">{anggota.anggota_perusahaan}</td> */}
                   {/* <td className="py-3 px-4">

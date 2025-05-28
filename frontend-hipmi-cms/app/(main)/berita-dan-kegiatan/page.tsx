@@ -48,7 +48,7 @@ const BeritaKegiatan = () => {
 
   const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLocalCurrentPage(1); 
+    setLocalCurrentPage(1);
     setSubmittedSearchQuery(searchInput);
   };
 
@@ -107,7 +107,10 @@ const BeritaKegiatan = () => {
             Telusuri Berita
           </h2>
 
-          <form onSubmit={handleSearchSubmit} className="mb-8 max-w-xl mx-auto md:mx-0">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="mb-8 max-w-xl mx-auto md:mx-0"
+          >
             <div className="flex gap-2">
               <input
                 type="text"

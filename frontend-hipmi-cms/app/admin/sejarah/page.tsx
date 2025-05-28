@@ -135,7 +135,12 @@ const EditSejarahPage = () => {
               value={konten}
               onChange={handleKontenChange}
               className="h-64 mb-12 text-textcolor"
-              style={{ border: "1px solid #ccc", borderRadius: "4px", height: "300px", marginBottom: "100px" }}
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                height: "300px",
+                marginBottom: "100px",
+              }}
             />
           )}
         </div>
@@ -157,14 +162,14 @@ const EditSejarahPage = () => {
           {previewFoto && (
             <div className="mt-4">
               <div className="relative w-[200px] h-[150px]">
-              <Image
-                src={previewFoto}
-                alt="Preview Foto Sejarah"
-                fill
-                sizes="(max-width: 768px) 200px, 150px"
-                className="rounded-md object-cover"
-              />
-            </div>
+                <Image
+                  src={previewFoto}
+                  alt="Preview Foto Sejarah"
+                  fill
+                  sizes="(max-width: 768px) 200px, 150px"
+                  className="rounded-md object-cover"
+                />
+              </div>
             </div>
           )}
         </div>

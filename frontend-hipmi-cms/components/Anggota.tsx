@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect } from "react";
 import Image from "next/image";
@@ -9,7 +9,8 @@ import LoadingSpinner from "./ui/LoadingSpinner"; // Asumsi path ini benar
 const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 const Anggota: React.FC = () => {
-  const { landingPageData, fetchLandingPageComponents, loading, error } = usePublic();
+  const { landingPageData, fetchLandingPageComponents, loading, error } =
+    usePublic();
 
   useEffect(() => {
     // Hanya fetch jika data untuk section 'anggota' belum ada
@@ -21,9 +22,12 @@ const Anggota: React.FC = () => {
   const anggotaContent = landingPageData.anggota;
 
   // Mengambil data dengan fallback ke nilai default
-  const title = anggotaContent?.title?.value || "Bergabunglah dengan Jaringan Pengusaha Muda Terdepan";
+  const title =
+    anggotaContent?.title?.value ||
+    "Bergabunglah dengan Jaringan Pengusaha Muda Terdepan";
   // Deskripsi bisa jadi satu blok teks atau dipecah jika perlu
-  const description = anggotaContent?.description?.value || 
+  const description =
+    anggotaContent?.description?.value ||
     `HIPMI Kota Cirebon adalah wadah bagi para pengusaha muda untuk
     bertumbuh, berkolaborasi, dan berkontribusi. Sebagai anggota, Anda
     akan mendapatkan akses ke berbagai program pengembangan diri,
@@ -33,15 +37,22 @@ const Anggota: React.FC = () => {
     Kami percaya bahwa kekuatan kolektif akan membawa dampak positif
     yang lebih besar. Mari bersama-sama membangun masa depan ekonomi
     yang lebih baik melalui inovasi dan semangat kewirausahaan.`;
-  
-  const buttonText = anggotaContent?.button_text?.value || "Pelajari Lebih Lanjut & Daftar";
+
+  const buttonText =
+    anggotaContent?.button_text?.value || "Pelajari Lebih Lanjut & Daftar";
   const buttonLink = anggotaContent?.button_link?.value || "#kontak"; // Atau link ke halaman pendaftaran
-  const imageUrl = anggotaContent?.image?.value ? `${urlBase}/storage/${anggotaContent.image.value}` : "/assets/placeholder.jpg";
-  const imageAlt = anggotaContent?.image?.key_name || "Jaringan Kolaborasi HIPMI";
+  const imageUrl = anggotaContent?.image?.value
+    ? `${urlBase}/storage/${anggotaContent.image.value}`
+    : "/assets/placeholder.jpg";
+  const imageAlt =
+    anggotaContent?.image?.key_name || "Jaringan Kolaborasi HIPMI";
 
   if (loading && !anggotaContent) {
     return (
-      <section id="keanggotaan" className="container mx-auto px-4 bg-white py-16 md:py-24 flex justify-center items-center min-h-[400px]">
+      <section
+        id="keanggotaan"
+        className="container mx-auto px-4 bg-white py-16 md:py-24 flex justify-center items-center min-h-[400px]"
+      >
         <LoadingSpinner />
       </section>
     );
@@ -56,17 +67,18 @@ const Anggota: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 lg:gap-y-0 items-center">
           {/* Kolom Kiri: Penjelasan Keanggotaan */}
           <div className="lg:pr-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-textcolor mb-6" dangerouslySetInnerHTML={{ __html: title }} />
-            <div 
-              className="text-gray-700 leading-relaxed mb-6 prose prose-slate max-w-none" 
-              dangerouslySetInnerHTML={{ __html: description }} 
+            <h2
+              className="text-3xl md:text-4xl font-bold text-textcolor mb-6"
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
+            <div
+              className="text-gray-700 leading-relaxed mb-6 prose prose-slate max-w-none"
+              dangerouslySetInnerHTML={{ __html: description }}
             />
             <Link href={buttonLink} legacyBehavior>
-            <a
-              className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors duration-300"
-            >
-              {buttonText}
-            </a>
+              <a className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors duration-300">
+                {buttonText}
+              </a>
             </Link>
           </div>
 
@@ -88,7 +100,9 @@ const Anggota: React.FC = () => {
           </div>
         </div>
         {error && !loading && !anggotaContent && (
-          <p className="text-center text-red-500 mt-8">Gagal memuat konten Keanggotaan: {error}</p>
+          <p className="text-center text-red-500 mt-8">
+            Gagal memuat konten Keanggotaan: {error}
+          </p>
         )}
         {/* Tombol/Panel "Lihat Semua Anggota" yang lebih menarik */}
         <div className="mt-12 md:mt-16 flex justify-center">
@@ -98,7 +112,9 @@ const Anggota: React.FC = () => {
                          rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out
                          focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             >
-              <span className="text-lg font-semibold">Lihat Semua Anggota Kami &rarr;</span>
+              <span className="text-lg font-semibold">
+                Lihat Semua Anggota Kami &rarr;
+              </span>
             </a>
           </Link>
         </div>

@@ -193,7 +193,7 @@ export const PesanProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [] // Tambahkan currentPage, pesanPerPage jika menggunakan refetch di atas
+    [] 
   );
 
   const contextValue: PesanContextType = {

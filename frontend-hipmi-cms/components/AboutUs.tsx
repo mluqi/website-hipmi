@@ -8,7 +8,8 @@ import LoadingSpinner from "./ui/LoadingSpinner"; // Asumsi path ini benar
 const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 const AboutUs = () => {
-  const { landingPageData, fetchLandingPageComponents, loading, error } = usePublic();
+  const { landingPageData, fetchLandingPageComponents, loading, error } =
+    usePublic();
 
   useEffect(() => {
     // Hanya fetch jika data untuk section 'aboutus' belum ada
@@ -19,14 +20,22 @@ const AboutUs = () => {
 
   const aboutUsContent = landingPageData.aboutus;
   const title = aboutUsContent?.title?.value || "HIPMI KOTA CIREBON";
-  const subtitle = aboutUsContent?.subtitle?.value || "Himpunan Pengusaha Muda Indonesia"; // Jika Anda menambahkan subtitle
-  const textContent = aboutUsContent?.text?.value || "Konten default tentang HIPMI Kota Cirebon...";
-  const imageUrl = aboutUsContent?.image?.value ? `${urlBase}/storage/${aboutUsContent.image.value}` : "/assets/placeholder.jpg";
+  const subtitle =
+    aboutUsContent?.subtitle?.value || "Himpunan Pengusaha Muda Indonesia"; // Jika Anda menambahkan subtitle
+  const textContent =
+    aboutUsContent?.text?.value ||
+    "Konten default tentang HIPMI Kota Cirebon...";
+  const imageUrl = aboutUsContent?.image?.value
+    ? `${urlBase}/storage/${aboutUsContent.image.value}`
+    : "/assets/placeholder.jpg";
   const imageAlt = aboutUsContent?.image?.key_name || "Logo HIPMI Kota Cirebon";
 
   if (loading && !aboutUsContent) {
     return (
-      <section id="about" className="container mx-auto py-20 md:py-60 flex justify-center items-center min-h-[300px]">
+      <section
+        id="about"
+        className="container mx-auto py-20 md:py-60 flex justify-center items-center min-h-[300px]"
+      >
         <LoadingSpinner />
       </section>
     );
@@ -34,7 +43,10 @@ const AboutUs = () => {
 
   if (error && !aboutUsContent) {
     return (
-      <section id="about" className="container mx-auto py-20 md:py-60 text-center text-red-500">
+      <section
+        id="about"
+        className="container mx-auto py-20 md:py-60 text-center text-red-500"
+      >
         <p>Gagal memuat konten About Us: {error}</p>
       </section>
     );
@@ -55,7 +67,10 @@ const AboutUs = () => {
           <h3 className="text-xl font-medium text-secondary mb-4 md:text-2xl">
             {subtitle}
           </h3>
-          <div className="text-gray-600 mt-2 text-sm md:text-base prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: textContent }} />
+          <div
+            className="text-gray-600 mt-2 text-sm md:text-base prose prose-slate max-w-none"
+            dangerouslySetInnerHTML={{ __html: textContent }}
+          />
         </div>
         {/* Blok Gambar */}
         <Image
