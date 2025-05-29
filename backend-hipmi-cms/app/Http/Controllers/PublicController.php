@@ -75,10 +75,11 @@ class PublicController extends Controller
     {
         try {
             $query = Anggota::with(['jabatan', 'bidang']);
-
-            $query->orderBy('id', 'desc');
-
-            $perPage = $request->input('per_page', 12); // Default 12 item per halaman, bisa disesuaikan
+    
+            // Default order by ID ascending (pertama ditambahkan akan muncul duluan)
+            $query->orderBy('id', 'asc');
+    
+            $perPage = $request->input('per_page', 50); // Default 50 item jika tidak ada per_page spesifik, untuk memastikan data cukup untuk filter di frontend
             $anggotaPaginated = $query->paginate($perPage);
 
             // Map data untuk menambahkan nama jabatan dan bidang

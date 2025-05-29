@@ -21,8 +21,8 @@ class AnggotaController extends Controller
                   ->orWhere('anggota_email', 'LIKE', '%' . $searchTerm . '%');
         }
 
-        $perPage = $request->input('per_page', 10); // Default 10 item per halaman
-        $anggota = $query->orderBy('id', 'desc')->paginate($perPage);
+        $perPage = $request->input('per_page', 10); 
+        $anggota = $query->orderBy('id', 'asc')->paginate($perPage); 
         return response()->json($anggota);
     }
 
