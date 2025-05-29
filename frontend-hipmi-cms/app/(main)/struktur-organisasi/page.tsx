@@ -9,17 +9,33 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import { usePublic } from "@/contexts/PublicContext";
-import { AnggotaItem } from "@/contexts/PublicContext";
+import { AnggotaItem, PaginatedApiResponse } from "@/contexts/PublicContext"; 
+import { Button } from "@/components/ui/button";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/storage/";
 
 const StrukturOrganisasi = () => {
-  const { anggotaList, fetchAnggota, loading, error } = usePublic();
+  const {
+    anggotaList,
+    fetchAnggota,
+    loading,
+    error,
+    anggotaCurrentPage,
+    anggotaTotalPages,
+    anggotaTotalItems,
+    anggotaItemsPerPage,
+  } = usePublic();
 
   useEffect(() => {
-    fetchAnggota();
-  }, [fetchAnggota]);
+    fetchAnggota(1, anggotaItemsPerPage || 12);
+  }, [fetchAnggota, anggotaItemsPerPage]);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= anggotaTotalPages) {
+      fetchAnggota(newPage, anggotaItemsPerPage);
+    }
+  };
 
   return (
     <main className="bg-slate-50 min-h-screen">
@@ -195,7 +211,7 @@ const StrukturOrganisasi = () => {
                       className="hover:bg-slate-50 transition-colors"
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {index + 1}
+                        {(anggotaCurrentPage - 1) * anggotaItemsPerPage + index + 1}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-textcolor">
                         {member.anggota_nama}
@@ -215,6 +231,44 @@ const StrukturOrganisasi = () => {
                   Belum ada data pengurus untuk ditampilkan.
                 </p>
               )}
+            </div>
+          )}
+          {/* Pagination Controls */}
+          {!loading && !error && anggotaList.length > 0 && anggotaTotalPages > 1 && (
+            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+              <div className="text-sm text-gray-700">
+                Menampilkan{" "}
+                <span className="font-medium">
+                  {(anggotaCurrentPage - 1) * anggotaItemsPerPage + 1}
+                </span>{" "}
+                -{" "}
+                <span className="font-medium">
+                  {(anggotaCurrentPage - 1) * anggotaItemsPerPage +
+                    anggotaList.length}
+                </span>{" "}
+                dari <span className="font-medium">{anggotaTotalItems}</span>{" "}
+                pengurus
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() => handlePageChange(anggotaCurrentPage - 1)}
+                  disabled={anggotaCurrentPage === 1}
+                  variant="outline"
+                  size="sm"
+                  className="bg-secondary"
+                >
+                  Sebelumnya
+                </Button>
+                <Button
+                  onClick={() => handlePageChange(anggotaCurrentPage + 1)}
+                  disabled={anggotaCurrentPage === anggotaTotalPages}
+                  variant="outline"
+                  size="sm"
+                  className="bg-secondary"
+                >
+                  Berikutnya
+                </Button>
+              </div>
             </div>
           )}
         </div>
