@@ -8,7 +8,7 @@ import { usePublic } from "@/contexts/PublicContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const imageStorageBaseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:8000/storage/";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://dev3-p3.palindo.id/storage/";
 
 const KeanggotaanPage = () => {
   const {

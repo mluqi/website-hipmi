@@ -16,7 +16,7 @@ import "react-quill/dist/quill.snow.css";
 const ReactQuill =
   typeof window === "object" ? require("react-quill") : () => false;
 
-const urlBase = "http://127.0.0.1:8000";
+const urlBase = "https://dev3-p3.palindo.id";
 
 const EditBeritaPage = () => {
   const {

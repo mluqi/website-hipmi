@@ -13,8 +13,9 @@ import {
 import { usePublic } from "@/contexts/PublicContext";
 import { AnggotaItem } from "@/contexts/PublicContext";
 
-const urlBase =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:8000/storage/";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://dev3-p3.palindo.id"; // Gunakan variabel environment yang konsisten
+const storageBaseUrl = `${API_URL}/storage/`;
 
 const StrukturOrganisasi = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const StrukturOrganisasi = () => {
   const displayedMembers = anggotaList.slice(0, 6);
 
   return (
-    <section id="struktur-organisasi" className="bg-slate-50 py-16 md:py-24">
+    <section id="struktur-organisasi" className="bg-slate-50 py-16 md:py-24"> {/* Pastikan ID unik jika digunakan untuk scroll anchor */}
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-textcolor">
@@ -58,7 +59,7 @@ const StrukturOrganisasi = () => {
           <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-x-6 gap-y-10 md:gap-x-8 md:gap-y-12">
             {displayedMembers.map((member: AnggotaItem) => {
               const photoUrl = member.anggota_foto
-                ? `${urlBase}${member.anggota_foto}`
+                ? `${storageBaseUrl}${member.anggota_foto}`
                 : "/assets/no-profile.png";
 
               return (

@@ -17,7 +17,7 @@ import {
 import { IoArrowBack } from "react-icons/io5";
 
 const imageStorageBaseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:8000/storage/";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://dev3-p3.palindo.id/storage/";
 
 const KegiatanDetailPage = () => {
   const params = useParams();

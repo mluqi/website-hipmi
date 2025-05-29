@@ -7,7 +7,8 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Image from "next/image";
 import { useJabatan } from "@/contexts/JabatanContext";
 
-const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const urlBase =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://dev3-p3.palindo.id";
 
 const AdminAnggotaPage = () => {
   const {

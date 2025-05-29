@@ -5,7 +5,8 @@ import Image from "next/image";
 import { usePublic } from "@/contexts/PublicContext"; // Impor usePublic
 import LoadingSpinner from "@/components/ui/LoadingSpinner"; // Impor LoadingSpinner
 
-const urlBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const urlBase =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://dev3-p3.palindo.id";
 
 const Sejarah = () => {
   const {

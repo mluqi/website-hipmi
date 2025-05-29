@@ -9,11 +9,11 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import { usePublic } from "@/contexts/PublicContext";
-import { AnggotaItem, PaginatedApiResponse } from "@/contexts/PublicContext"; 
+import { AnggotaItem, PaginatedApiResponse } from "@/contexts/PublicContext";
 import { Button } from "@/components/ui/button";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/storage/";
+  process.env.NEXT_PUBLIC_API_URL || "https://dev3-p3.palindo.id/storage/";
 
 const StrukturOrganisasi = () => {
   const {
@@ -211,7 +211,9 @@ const StrukturOrganisasi = () => {
                       className="hover:bg-slate-50 transition-colors"
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {(anggotaCurrentPage - 1) * anggotaItemsPerPage + index + 1}
+                        {(anggotaCurrentPage - 1) * anggotaItemsPerPage +
+                          index +
+                          1}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-textcolor">
                         {member.anggota_nama}
@@ -234,43 +236,46 @@ const StrukturOrganisasi = () => {
             </div>
           )}
           {/* Pagination Controls */}
-          {!loading && !error && anggotaList.length > 0 && anggotaTotalPages > 1 && (
-            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-              <div className="text-sm text-gray-700">
-                Menampilkan{" "}
-                <span className="font-medium">
-                  {(anggotaCurrentPage - 1) * anggotaItemsPerPage + 1}
-                </span>{" "}
-                -{" "}
-                <span className="font-medium">
-                  {(anggotaCurrentPage - 1) * anggotaItemsPerPage +
-                    anggotaList.length}
-                </span>{" "}
-                dari <span className="font-medium">{anggotaTotalItems}</span>{" "}
-                pengurus
+          {!loading &&
+            !error &&
+            anggotaList.length > 0 &&
+            anggotaTotalPages > 1 && (
+              <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                <div className="text-sm text-gray-700">
+                  Menampilkan{" "}
+                  <span className="font-medium">
+                    {(anggotaCurrentPage - 1) * anggotaItemsPerPage + 1}
+                  </span>{" "}
+                  -{" "}
+                  <span className="font-medium">
+                    {(anggotaCurrentPage - 1) * anggotaItemsPerPage +
+                      anggotaList.length}
+                  </span>{" "}
+                  dari <span className="font-medium">{anggotaTotalItems}</span>{" "}
+                  pengurus
+                </div>
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => handlePageChange(anggotaCurrentPage - 1)}
+                    disabled={anggotaCurrentPage === 1}
+                    variant="outline"
+                    size="sm"
+                    className="bg-secondary"
+                  >
+                    Sebelumnya
+                  </Button>
+                  <Button
+                    onClick={() => handlePageChange(anggotaCurrentPage + 1)}
+                    disabled={anggotaCurrentPage === anggotaTotalPages}
+                    variant="outline"
+                    size="sm"
+                    className="bg-secondary"
+                  >
+                    Berikutnya
+                  </Button>
+                </div>
               </div>
-              <div className="flex space-x-2">
-                <Button
-                  onClick={() => handlePageChange(anggotaCurrentPage - 1)}
-                  disabled={anggotaCurrentPage === 1}
-                  variant="outline"
-                  size="sm"
-                  className="bg-secondary"
-                >
-                  Sebelumnya
-                </Button>
-                <Button
-                  onClick={() => handlePageChange(anggotaCurrentPage + 1)}
-                  disabled={anggotaCurrentPage === anggotaTotalPages}
-                  variant="outline"
-                  size="sm"
-                  className="bg-secondary"
-                >
-                  Berikutnya
-                </Button>
-              </div>
-            </div>
-          )}
+            )}
         </div>
       </section>
     </main>

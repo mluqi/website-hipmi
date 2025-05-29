@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useBerita, BeritaItem } from "@/contexts/BeritaContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Image from "next/image";
-const urlBase = "http://127.0.0.1:8000";
+const urlBase = "https://dev3-p3.palindo.id";
 
 const AdminBeritaPage = () => {
   const {
