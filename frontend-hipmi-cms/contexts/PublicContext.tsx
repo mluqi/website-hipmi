@@ -494,7 +494,7 @@ export const PublicProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get("/public/content");
+      const response = await api.get("/public/data-landing-page");
       setLandingPageData(response.data);
     } catch (err: any) {
       setError(

@@ -23,9 +23,13 @@ const Berita: React.FC = () => {
   } = usePublic();
 
   useEffect(() => {
-    fetchBerita();
-    fetchKegiatan();
-  }, [fetchBerita, fetchKegiatan]);
+        if (beritaList.length === 0) {
+          fetchBerita();
+        }
+        if (kegiatanList.length === 0) {
+          fetchKegiatan();
+        }
+      }, [fetchBerita, fetchKegiatan, beritaList.length, kegiatanList.length]);
 
   const handleChangePage = () => {
     router.push("/berita-dan-kegiatan");

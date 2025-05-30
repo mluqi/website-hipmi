@@ -14,7 +14,7 @@ import { usePublic } from "@/contexts/PublicContext";
 import { AnggotaItem } from "@/contexts/PublicContext";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://dev3-p3.palindo.id"; // Gunakan variabel environment yang konsisten
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://dev3-p3.palindo.id";
 const storageBaseUrl = `${API_URL}/storage/`;
 
 const StrukturOrganisasi = () => {
@@ -27,13 +27,17 @@ const StrukturOrganisasi = () => {
   const { anggotaList, fetchAnggota, loading, error } = usePublic();
 
   useEffect(() => {
-    fetchAnggota();
-  }, [fetchAnggota]);
+    if (anggotaList.length === 0) {
+      fetchAnggota(1, 6);
+    }
+  }, [fetchAnggota, anggotaList.length]);
 
   const displayedMembers = anggotaList.slice(0, 6);
 
   return (
-    <section id="struktur-organisasi" className="bg-slate-50 py-16 md:py-24"> {/* Pastikan ID unik jika digunakan untuk scroll anchor */}
+    <section id="struktur-organisasi" className="bg-slate-50 py-16 md:py-24">
+      {" "}
+      {/* Pastikan ID unik jika digunakan untuk scroll anchor */}
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-textcolor">

@@ -14,7 +14,6 @@ const Anggota: React.FC = () => {
     usePublic();
 
   useEffect(() => {
-    // Hanya fetch jika data untuk section 'anggota' belum ada
     if (!landingPageData.anggota) {
       fetchLandingPageComponents();
     }
