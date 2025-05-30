@@ -59,7 +59,7 @@ Route::prefix('public')->group(function () {
     Route::get('/sejarah', [PublicController::class, 'getSejarahContent']);
 
     // Landing Page Components
-    Route::get('/content', [LandingPageComponentController::class, 'index']);
+    Route::get('/data-landing-page', [LandingPageComponentController::class, 'index']);
 
     //kontak
     Route::get('/kontak', [PublicController::class, 'getKontakContent']);
